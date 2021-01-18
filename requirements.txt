@@ -1,0 +1,3 @@
+dualing>=1.0.1
+nalp>=2.0.0
+opytimizer>=2.1.2
