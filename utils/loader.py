@@ -29,7 +29,7 @@ def download_file(url, output_path):
 
     # If file does not exist
     if not file_exists:
-        print(f'Downloading file from: {url}')
+        print(f'Downloading file: {url}')
 
         # Checks if data folder exists
         folder_exists = os.path.exists(DATA_FOLDER)
