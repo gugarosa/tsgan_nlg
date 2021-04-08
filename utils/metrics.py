@@ -1,3 +1,6 @@
+"""Metrics to evaluate Natural Language Generation.
+"""
+
 import datasets
 
 import nalp.utils.preprocess as p
