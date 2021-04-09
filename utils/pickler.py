@@ -19,9 +19,6 @@ def save_to_file(output_path, **kwargs):
             # Dumps the object
             pickle.dump(v, f)
 
-        # Closes the file
-        f.close()
-
 
 def load_from_file(input_file):
     """Loads an object from a pickle file.
@@ -38,8 +35,5 @@ def load_from_file(input_file):
     with open(f'{input_file}', 'rb') as f:
         # Loads the object
         obj = pickle.load(f)
-
-    # Closes the file
-    f.close()
 
     return obj

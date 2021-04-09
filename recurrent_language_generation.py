@@ -117,7 +117,5 @@ if __name__ == '__main__':
         writer = csv.writer(f)
 
         # Dumps the data
+        writer.writerow(['reference', 'greedy_search', 'temperature_sampling', 'top_sampling'])
         writer.writerows(zip(tokens, greedy_tokens, temp_tokens, top_tokens))
-    
-    # Closes the file
-    f.close()
