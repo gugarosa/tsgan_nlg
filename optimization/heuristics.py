@@ -1,3 +1,6 @@
+"""Heuristic algorithms wrapper.
+"""
+
 from opytimizer.optimizers.evolutionary import gp
 from opytimizer.optimizers.swarm import ba, cs, fa, pso
 

@@ -1,4 +1,4 @@
-"""Recurrent-based model classes wrapper.
+"""Recurrent-based models wrapper.
 """
 
 from nalp.models.generators import (GRUGenerator, LSTMGenerator, RMCGenerator,

@@ -1,3 +1,6 @@
+"""Opytimizer pipeline wrapper.
+"""
+
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
 from opytimizer.core.optimizer import Optimizer

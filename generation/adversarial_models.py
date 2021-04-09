@@ -1,2 +1,2 @@
-"""Adversarial-based model classes wrapper.
+"""Adversarial-based models wrapper.
 """
