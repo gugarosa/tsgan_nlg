@@ -4,10 +4,10 @@ import tensorflow as tf
 
 import generation.recurrent_models as r
 import utils.loader as l
+import utils.pickler as p
 from nalp.corpus import SentenceCorpus
 from nalp.datasets import LanguageModelingDataset
 from nalp.encoders import IntegerEncoder
-from nalp.models.generators import LSTMGenerator
 
 
 def get_arguments():
@@ -30,6 +30,10 @@ def get_arguments():
     parser.add_argument('-val_split', help='Percentage of the validation set', type=float, default=0.1)
 
     parser.add_argument('-test_split', help='Percentage of the testing set', type=float, default=0.1)
+
+    parser.add_argument('-min_frequency', help='Minimum frequency of tokens', type=int, default=1)
+
+    parser.add_argument('-max_pad_length', help='Maximum pad length of tokens', type=int, default=10)
 
     parser.add_argument('-embedding_size', help='Number of embedding units', type=int, default=256)
 
@@ -65,6 +69,8 @@ if __name__ == '__main__':
     train_split = args.train_split
     val_split = args.val_split
     test_split = args.test_split
+    min_frequency = args.min_frequency
+    max_pad_length = args.max_pad_length
     seed = args.seed
 
     # Model-based arguments
@@ -75,6 +81,7 @@ if __name__ == '__main__':
     batch_size = args.batch_size
     lr = args.lr
     epochs = args.epochs
+    output_path = f'outputs/{model_name}'
 
     # RMC-based arguments
     n_slots = args.n_slots
@@ -88,15 +95,15 @@ if __name__ == '__main__':
     tokens = l.tokenize_data(data)
 
     # Creates the sentence-based corpus
-    corpus = SentenceCorpus(tokens=tokens)
+    corpus = SentenceCorpus(tokens=tokens, min_frequency=min_frequency, max_pad_length=max_pad_length)
 
     # Initializes, learns the encoder and encodes the data
     encoder = IntegerEncoder()
     encoder.learn(corpus.vocab_index, corpus.index_vocab)
-    encoded_tokens = encoder.encode(tokens)
+    encoded_tokens = encoder.encode(corpus.tokens)
 
     # Splits the tokens
-    enc_train, enc_val, _ = l.split_data(encoded_tokens, train_split, val_split, test_split, seed)
+    enc_train, enc_val, enc_test = l.split_data(encoded_tokens, train_split, val_split, test_split, seed)
 
     # Creates Language Modeling datasets
     train = LanguageModelingDataset(enc_train, batch_size=batch_size)
@@ -121,8 +128,9 @@ if __name__ == '__main__':
                   loss=tf.losses.SparseCategoricalCrossentropy(from_logits=True),
                   metrics=[tf.metrics.SparseCategoricalAccuracy(name='accuracy')])
 
-    # Fits the model
+    # Fits the model and saves its weights
     model.fit(train.batches, epochs=epochs, validation_data=val.batches)
-
-    # Saves model weights
-    model.save_weights(f'outputs/{model_name}', save_format='tf')
+    
+    # Saves model and objects to files
+    model.save_weights(output_path, save_format='tf')
+    p.save_to_file(output_path, corpus=corpus, encoder=encoder, enc_test=enc_test)
