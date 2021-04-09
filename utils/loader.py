@@ -2,14 +2,17 @@
 """
 
 import os
+import random
 import tarfile
 import urllib.request
 
 import nalp.utils.loader as l
+import nalp.utils.preprocess as p
 
 # Constants
 DATA_FOLDER = 'data/'
-DATA_FILES = ['amazon_customer_reviews', 'coco_image_captions', 'google_one_billion_words', 'wmt_emnlp17_news']
+DATA_FILES = ['amazon_customer_reviews', 'coco_image_captions',
+              'google_one_billion_words', 'wmt_emnlp17_news']
 TAR_FILE = 'language_modelling.tar.gz'
 TAR_PATH = DATA_FOLDER + TAR_FILE
 TAR_URL = 'https://recogna.tech/files/datasets/' + TAR_FILE
@@ -81,14 +84,14 @@ def load_data(file_name):
         file_name (str): Name of data file to be loaded (without extension).
 
     Returns:
-        Text-based data from a possible file.
+        List of sentences from a text-based data file.
 
     """
 
     # Checks if file's name really exists
     if file_name not in DATA_FILES:
         # If not, raises an exception
-        raise Exception(f'Data not supported yet.')
+        raise Exception('Data not supported yet.')
 
     # Downloads the file
     download_file(TAR_URL, TAR_PATH)
@@ -96,7 +99,69 @@ def load_data(file_name):
     # Decompresses the file
     folder_path = untar_file(TAR_PATH)
 
-    # Loads the auxiliary data
-    data = l.load_txt(f'{folder_path}/{file_name}.txt')
+    # Loads the data and split into sentences
+    sentences = l.load_txt(f'{folder_path}/{file_name}.txt').splitlines()
 
-    return data
+    return sentences
+
+
+def split_data(sentences, train_split=0.8, val_split=0.1, test_split=0.1, seed=0):
+    """Splits the data according to provided percentages.
+
+    Args:
+        sentences (list): List of sentences to be splitted.
+        train_split (float): Training set split.
+        val_split (float): Validation set split.
+        test_split (float): Testing set split.
+        seed (int): Random seed.
+
+    Returns:
+        Lists holding the training, validation and testing sets.
+
+    """
+
+    # Defines the random seed
+    random.seed(seed)
+
+    # Checks if supplied splits sum to one
+    if train_split + val_split + test_split != 1:
+        # If not, raises an exception
+        raise Exception('Splits do not sum to 1.')
+
+    # Calculates the number of input samples
+    n_samples = len(sentences)
+
+    # Calculates the number of samples per set
+    # Note we don't need the number of test samples as it will be the rest
+    train_samples = round(n_samples * train_split)
+    val_samples = round(n_samples * val_split)
+
+    # Generates a shuffled list
+    random.shuffle(sentences)
+
+    # Splices the array into sets
+    train = sentences[:train_samples]
+    val = sentences[train_samples:train_samples+val_samples]
+    test = sentences[train_samples+val_samples:]
+
+    return train, val, test
+
+
+def tokenize_data(sentences):
+    """Tokenizes the data according to a pre-defined pipeline.
+
+    Args:
+        sentences (list): List of sentences to be tokenized.
+
+    Returns:
+        Tokenized sentences.
+
+    """
+
+    # Defines the tokenization pipeline
+    pipe = p.pipeline(p.lower_case, p.valid_char, p.tokenize_to_word)
+
+    # Tokenizes the data
+    tokens = [pipe(sentence) for sentence in sentences]
+
+    return tokens
