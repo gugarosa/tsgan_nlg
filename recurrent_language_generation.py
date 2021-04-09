@@ -1,4 +1,5 @@
 import argparse
+import csv
 
 import generation.recurrent_models as r
 import utils.pickler as p
@@ -17,6 +18,12 @@ def get_arguments():
     parser.add_argument('model', help='Type of model', choices=['gru', 'lstm', 'rmc', 'rnn'])
 
     parser.add_argument('n_tokens', help='How many tokens to be used as start string', type=int, default=3)
+
+    parser.add_argument('-temp', help='Temperature sampling', type=float, default=0.5)
+
+    parser.add_argument('-top_k', help='Amount of `k` for top-k sampling', type=int, default=0)
+
+    parser.add_argument('-top_p', help='Probability for nucleus sampling', type=float, default=1.0)
 
     parser.add_argument('-embedding_size', help='Number of embedding units', type=int, default=256)
 
@@ -41,6 +48,9 @@ if __name__ == '__main__':
 
     # Common-based arguments
     n_tokens = args.n_tokens
+    temp = args.temp
+    top_k = args.top_k
+    top_p = args.top_p
 
     # Model-based arguments
     model_name = args.model
@@ -77,6 +87,9 @@ if __name__ == '__main__':
     model.load_weights(f'outputs/{model_name}').expect_partial()
     model.build((1, None))
 
+    # Instantiates lists for the outputs
+    tokens, greedy_tokens, temp_tokens, top_tokens = [], [], [], []
+
     # Iterates over every sentence in testing set
     for token in enc_test:
         # Decodes the token back to words
@@ -85,5 +98,26 @@ if __name__ == '__main__':
         # Gathers `n` tokens as the starting token
         start_token = decoded_token[:n_tokens]
 
-        #
-        print(model.generate_top_sampling(start=decoded_token, max_length=len(decoded_token)))
+        # Generates with three distinct strategies
+        greedy_token = model.generate_greedy_search(start=decoded_token, max_length=len(decoded_token))
+        temp_token = model.generate_temperature_sampling(start=decoded_token, max_length=len(decoded_token),
+                                                         temperature=temp)
+        top_token = model.generate_top_sampling(start=decoded_token, max_length=len(decoded_token),
+                                                k=top_k, p=top_p)
+
+        # Appends the outputs to lists
+        tokens.append(' '.join(decoded_token))
+        greedy_tokens.append(' '.join(start_token + greedy_token))
+        temp_tokens.append(' '.join(start_token + temp_token))
+        top_tokens.append(' '.join(start_token + top_token))
+
+    # Opens an output .csv file
+    with open(f'outputs/{model_name}.csv', 'w') as f:
+        # Creates the .csv writer
+        writer = csv.writer(f)
+
+        # Dumps the data
+        writer.writerows(zip(tokens, greedy_tokens, temp_tokens, top_tokens))
+    
+    # Closes the file
+    f.close()
