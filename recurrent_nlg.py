@@ -19,7 +19,8 @@ def get_arguments():
 
     parser = argparse.ArgumentParser(usage='Train and evaluates recurrent-based NLG.')
 
-    parser.add_argument('dataset', help='Dataset', choices=['amazon_customer_reviews', 'coco_image_captions'])
+    parser.add_argument('dataset', help='Dataset', choices=['amazon_customer_reviews', 'coco_image_captions',
+                                                            'google_one_billion_words', 'wmt_emnlp17_news'])
 
     parser.add_argument('-train_split', help='Percentage of the training set', type=float, default=0.8)
 
@@ -75,3 +76,6 @@ if __name__ == '__main__':
 
     # Evaluates the generator
     lstm.evaluate(test.batches)
+
+    # Saves generator weights
+    lstm.save_weights('outputs/lstm', save_format='tf')
