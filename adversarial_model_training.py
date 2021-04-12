@@ -75,6 +75,8 @@ def get_arguments():
 
     parser.add_argument('-d_epochs', help='Amount of discriminator training epochs', type=int, default=10)
 
+    parser.add_argument('-g_epochs', help='Amount of generator training epochs', type=int, default=1)
+
     parser.add_argument('-n_rollouts', help='Number of rollouts', type=int, default=16)
 
     parser.add_argument('-seed', help='Seed identifier', type=int, default=0)
@@ -113,6 +115,7 @@ if __name__ == '__main__':
     pre_g_epochs = args.pre_g_epochs
     epochs = args.epochs
     d_epochs = args.d_epochs
+    g_epochs = args.g_epochs
     n_rollouts = args.n_rollouts
     output_path = f'outputs/{model_name}'
 
@@ -198,7 +201,7 @@ if __name__ == '__main__':
         model.pre_fit(train.batches, g_epochs=pre_g_epochs, d_epochs=pre_d_epochs)
 
         # Fits the model
-        model.fit(train.batches, epochs=epochs, d_epochs=d_epochs, n_rollouts=n_rollouts)
+        model.fit(train.batches, epochs=epochs, g_epochs=g_epochs, d_epochs=d_epochs, n_rollouts=n_rollouts)
     
     # Saves model and objects to files
     model.save_weights(output_path, save_format='tf')
