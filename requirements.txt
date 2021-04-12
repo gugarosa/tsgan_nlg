@@ -1,6 +1,6 @@
+git+https://github.com/gugarosa/dualing.git
+git+https://github.com/gugarosa/nalp.git
+git+https://github.com/gugarosa/opytimizer.git
 datasets>=1.5.0
-dualing>=1.0.1
-nalp>=2.0.0
-opytimizer>=2.1.2
 rouge-score>=0.0.4
 statys>=1.0.0
