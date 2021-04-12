@@ -1,13 +1,13 @@
 import argparse
 
 import tensorflow as tf
+from nalp.corpus import SentenceCorpus
+from nalp.datasets import LanguageModelingDataset
+from nalp.encoders import IntegerEncoder
 
 import generation.recurrent_models as r
 import utils.loader as l
 import utils.pickler as p
-from nalp.corpus import SentenceCorpus
-from nalp.datasets import LanguageModelingDataset
-from nalp.encoders import IntegerEncoder
 
 
 def get_arguments():
