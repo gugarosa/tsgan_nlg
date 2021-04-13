@@ -129,8 +129,9 @@ if __name__ == '__main__':
                   metrics=[tf.metrics.SparseCategoricalAccuracy(name='accuracy')])
 
     # Fits the model and saves its weights
-    model.fit(train.batches, epochs=epochs, validation_data=val.batches)
+    history = model.fit(train.batches, epochs=epochs, validation_data=val.batches)
     
     # Saves model and objects to files
     model.save_weights(output_path, save_format='tf')
-    p.save_to_file(output_path, corpus=corpus, encoder=encoder, enc_test=enc_test)
+    p.save_to_file(output_path, train_history=history.history,
+                   corpus=corpus, encoder=encoder, enc_test=enc_test)
