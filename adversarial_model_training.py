@@ -205,4 +205,5 @@ if __name__ == '__main__':
     
     # Saves model and objects to files
     model.save_weights(output_path, save_format='tf')
-    p.save_to_file(output_path, corpus=corpus, encoder=encoder, enc_test=enc_test)
+    p.save_to_file(output_path, train_history=model.history,
+                   corpus=corpus, encoder=encoder, enc_test=enc_test)
