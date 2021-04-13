@@ -1,0 +1,2 @@
+from core.tsgan_contrastive import TSGANContrastive
+from core.tsgan_triplet import TSGANTriplet

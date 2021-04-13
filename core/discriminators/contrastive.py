@@ -1,10 +1,9 @@
-"""Contrastive-based discriminator.
+"""Contrastive Loss-based Discriminator.
 """
 
 import nalp.utils.logging as l
-
-from dualing.models.base import CNN, MLP
 from dualing.models import ContrastiveSiamese
+from dualing.models.base import CNN, MLP
 
 logger = l.get_logger(__name__)
 
@@ -30,7 +29,6 @@ class ContrastiveDiscriminator(ContrastiveSiamese):
 
         logger.info('Overriding class: Discriminator -> ContrastiveDiscriminator.')
 
-        #
         # base = CNN(n_blocks=3, init_kernel=5, n_output=128)
         base = MLP(n_hidden=(512, 256, 128))
 

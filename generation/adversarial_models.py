@@ -3,9 +3,11 @@
 
 from nalp.models import GSGAN, MaliGAN, RelGAN, SeqGAN
 
+from core import TSGANContrastive, TSGANTriplet
+
 
 class AdversarialModel:
-    """A AdversarialModel class help users in selecting distinct adversarial architectures from the command line.
+    """An AdversarialModel class help users in selecting distinct adversarial architectures from the command line.
 
     """
 
@@ -26,7 +28,9 @@ ADVERSARIAL_MODEL = dict(
     gsgan=AdversarialModel(GSGAN),
     maligan=AdversarialModel(MaliGAN),
     relgan=AdversarialModel(RelGAN),
-    seqgan=AdversarialModel(SeqGAN)
+    seqgan=AdversarialModel(SeqGAN),
+    tsgan_contrastive=AdversarialModel(TSGANContrastive),
+    tsgan_triplet=AdversarialModel(TSGANTriplet)
 )
 
 

@@ -4,8 +4,7 @@ from nalp.datasets import LanguageModelingDataset
 from nalp.encoders import IntegerEncoder
 
 import utils.loader as l
-from core.tsgan import TSGAN
-
+from core import TSGANContrastive, TSGANTriplet
 
 # Loads and tokenizes the data
 data = l.load_data('coco_image_captions')
@@ -27,8 +26,11 @@ train = LanguageModelingDataset(enc_train, batch_size=4)
 val = LanguageModelingDataset(enc_val, batch_size=4)
 
 #
-model = TSGAN(encoder=encoder, vocab_size=corpus.vocab_size,
-              embedding_size=64, hidden_size=128)
+model = TSGANContrastive(encoder=encoder, vocab_size=corpus.vocab_size,
+                         embedding_size=64, hidden_size=128)
+
+# model = TSGANTriplet(encoder=encoder, vocab_size=corpus.vocab_size,
+#                      embedding_size=64, hidden_size=128)
 
 # Compiles the model
 model.compile(pre_d_optimizer=tf.optimizers.Adam(learning_rate=0.001),

@@ -1,30 +1,27 @@
-"""Text-Similarity Generative Adversarial Network.
+"""Text-Similarity Generative Adversarial Network with Triplet Loss-based Discriminator.
 """
 
-import numpy as np
-import tensorflow as tf
-from tensorflow.keras.utils import Progbar
-
-import nalp.utils.constants as c
 import nalp.utils.logging as l
+import tensorflow as tf
 from nalp.core import Adversarial
 from nalp.models.generators import LSTMGenerator
+from tensorflow.keras.utils import Progbar
 
-from core.contrastive import ContrastiveDiscriminator
+from core.discriminators import TripletDiscriminator
 
 logger = l.get_logger(__name__)
 
 
-class TSGAN(Adversarial):
-    """A TSGAN class is the one in charge of Text-Similarity Generative Adversarial Networks implementation.
+class TSGANTriplet(Adversarial):
+    """A TSGANTriplet class is the one in charge of Text-Similarity Generative Adversarial Networks
+    implementation with a triplet loss-based discriminator.
 
     References:
         Not published yet.
 
     """
 
-    def __init__(self, encoder=None, vocab_size=1, max_length=1, embedding_size=32, hidden_size=64,
-                 temperature=1):
+    def __init__(self, encoder=None, vocab_size=1, max_length=1, embedding_size=32, hidden_size=64):
         """Initialization method.
 
         Args:
@@ -33,26 +30,22 @@ class TSGAN(Adversarial):
             max_length (int): Maximum length of the sequences for the discriminator.
             embedding_size (int): The size of the embedding layer for both discriminator and generator.
             hidden_size (int): The amount of hidden neurons for the generator.
-            temperature (float): Temperature value to sample the token.
 
         """
 
-        logger.info('Overriding class: Adversarial -> TSGAN.')
+        logger.info('Overriding class: Adversarial -> TSGANTriplet.')
 
         # Creating the discriminator network
-        D = ContrastiveDiscriminator()
+        D = TripletDiscriminator()
 
         # Creating the generator network
         G = LSTMGenerator(encoder, vocab_size, embedding_size, hidden_size)
 
         # Overrides its parent class with any custom arguments if needed
-        super(TSGAN, self).__init__(D, G, name='TSGAN')
+        super(TSGANTriplet, self).__init__(D, G, name='TSGANTriplet')
 
         # Defining a property for holding the vocabulary size
         self.vocab_size = vocab_size
-
-        # Defining a property for holding the temperature
-        self.T = temperature
 
         logger.info('Class overrided.')
 
@@ -68,30 +61,18 @@ class TSGAN(Adversarial):
     def vocab_size(self, vocab_size):
         self._vocab_size = vocab_size
 
-    @property
-    def T(self):
-        """float: Temperature value to sample the token.
-
-        """
-
-        return self._T
-
-    @T.setter
-    def T(self, T):
-        self._T = T
-
     def compile(self, pre_d_optimizer, pre_g_optimizer, d_optimizer, g_optimizer):
         """Main building method.
 
         Args:
-            pre_d_optimizer (tf.keras.optimizers): An optimizer instance for pre-training the discrminator.
+            pre_d_optimizer (tf.keras.optimizers): An optimizer instance for pre-training the discriminator.
             pre_g_optimizer (tf.keras.optimizers): An optimizer instance for pre-training the generator.
             d_optimizer (tf.keras.optimizers): An optimizer instance for the discriminator.
             g_optimizer (tf.keras.optimizers): An optimizer instance for the generator.
 
         """
 
-        # Compiles the discriminator
+        # Compiles the discriminator with the `pre_d_optimizer`
         self.D.compile(optimizer=pre_d_optimizer)
 
         # Creates optimizers for pre-training, discriminator and generator
@@ -193,12 +174,11 @@ class TSGAN(Adversarial):
             # Iterate through all possible pre-training batches
             for x_batch, _ in batches:
                 #
-                x1_batch = tf.random.normal((4, 128))
-                x2_batch = tf.random.normal((4, 128))
-                y_batch = [1, 1, 1, 1]
+                x_batch = tf.random.normal((4, 128))
+                y_batch = [1, 0, 1, 0]
 
-                #
-                self.D.step(x1_batch, x2_batch, y_batch)
+                # Performs the optimization step over the discriminator
+                self.D.step(x_batch, y_batch)
 
                 # Adding corresponding values to the progress bar
                 b.add(1, values=[('loss(D)', self.D.loss_metric.result())])

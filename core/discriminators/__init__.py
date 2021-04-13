@@ -1,0 +1,2 @@
+from core.discriminators.contrastive import ContrastiveDiscriminator
+from core.discriminators.triplet import TripletDiscriminator

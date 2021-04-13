@@ -1,4 +1,4 @@
-"""Opytimizer pipeline wrapper.
+"""Wrapper over Opytimizer pipeline.
 """
 
 from opytimizer import Opytimizer
