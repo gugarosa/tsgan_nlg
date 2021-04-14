@@ -35,16 +35,20 @@ if __name__ == '__main__':
 
     #
     model = TSGANContrastive(encoder=encoder, vocab_size=corpus.vocab_size,
-                            embedding_size=64, hidden_size=128)
+                             embedding_size=64, hidden_size=128, temperature=0.5,
+                             n_pairs=2)
 
     # model = TSGANTriplet(encoder=encoder, vocab_size=corpus.vocab_size,
     #                      embedding_size=64, hidden_size=128)
 
     # Compiles the model
-    model.compile(pre_d_optimizer=tf.optimizers.Adam(learning_rate=0.001),
+    model.compile(pre_d_optimizer=tf.optimizers.Adam(learning_rate=0.01),
                 pre_g_optimizer=tf.optimizers.Adam(learning_rate=0.001),
                 d_optimizer=tf.optimizers.Adam(learning_rate=0.001),
                 g_optimizer=tf.optimizers.Adam(learning_rate=0.001))
 
     #
-    model.pre_fit(train.batches, g_epochs=0, d_epochs=100)
+    model.pre_fit(train.batches, g_epochs=1, d_epochs=1)
+
+    #
+    model.fit(train.batches, epochs=1, d_epochs=1)
