@@ -238,15 +238,11 @@ class TSGANContrastive(Adversarial):
         # Gathers the batch size and maximum sequence length
         batch_size, max_length = x1.shape[0], x2.shape[1]
 
-        print(self.D.predict(x1, x2))
+        # Calculates the reward mechanism
+        rewards = self.D.predict(x1, x2)
 
-        # Calculates the positive part of the discriminator's output
-        rewards = tf.squeeze(self.D.predict(x1, x2), 1)[:, 1]
-
-        # Calculating the maximum-likelihood reward
+        # Normalizes the reward
         rewards = tf.math.divide(rewards, 1 - rewards)
-
-        # Normalizes the tensor
         rewards = tf.math.divide(rewards, tf.math.reduce_sum(rewards))
 
         # Broadcasts the tensor along the max_length dimensions
@@ -324,7 +320,7 @@ class TSGANContrastive(Adversarial):
         # Using tensorflow's gradient
         with tf.GradientTape() as tape:
             # Calculate the predictions based on inputs
-            preds = tf.squeeze(self.D.predict(x1, x2), 1)
+            preds = tf.expand_dims(self.D.predict(x1, x2), -1)
 
             # Calculate the loss
             loss = tf.reduce_mean(self.loss(y, preds))
@@ -445,19 +441,19 @@ class TSGANContrastive(Adversarial):
                 # Gathering the batch size and the maximum sequence length
                 batch_size, max_length = x_batch.shape[0], x_batch.shape[1]
 
-                # # Iterate through all possible discriminator's epochs
-                # for _ in range(d_epochs):
-                #     # Generates a batch of fake inputs and concatenates
-                #     x_fake_batch, _ = self.generate_batch(batch_size, max_length)
-                #     x_concat_batch = tf.concat([x_batch, x_fake_batch], 0)
-                #     y_concat_batch = tf.concat(
-                #         [tf.zeros(batch_size, dtype='int32'), tf.ones(batch_size, dtype='int32')], 0)
+                # Iterate through all possible discriminator's epochs
+                for _ in range(d_epochs):
+                    # Generates a batch of fake inputs and concatenates
+                    x_fake_batch, _ = self.generate_batch(batch_size, max_length)
+                    x_concat_batch = tf.concat([x_batch, x_fake_batch], 0)
+                    y_concat_batch = tf.concat(
+                        [tf.zeros(batch_size, dtype='int32'), tf.ones(batch_size, dtype='int32')], 0)
 
-                #     # Creates balanced pairs of data
-                #     x1_batch, x2_batch, y_batch = self.create_balanced_pairs(x_concat_batch, y_concat_batch)
+                    # Creates balanced pairs of data
+                    x1_batch, x2_batch, y_batch = self.create_balanced_pairs(x_concat_batch, y_concat_batch)
 
-                #     # Performs the optimization step over the discriminator
-                #     self.D_step(x1_batch, x2_batch, y_batch)
+                    # Performs the optimization step over the discriminator
+                    self.D.step(x1_batch, x2_batch, y_batch)
 
                 # Generates a batch of fake inputs
                 x_fake_batch, y_fake_batch = self.generate_batch(batch_size, max_length)
@@ -470,10 +466,10 @@ class TSGANContrastive(Adversarial):
 
                 # Adding corresponding values to the progress bar
                 b.add(1, values=[('loss(G)', self.G_loss.result()),
-                                 ('loss(D)', self.D_loss.result())])
+                                 ('loss(D)', self.D.loss_metric.result())])
 
             # Dumps the losses to history
             self.history['G_loss'].append(self.G_loss.result().numpy())
-            self.history['D_loss'].append(self.D_loss.result().numpy())
+            self.history['D_loss'].append(self.D.loss_metric.result().numpy())
 
-            logger.to_file('Loss(G): %s | Loss(D): %s', self.G_loss.result().numpy(), self.D_loss.result().numpy())
+            logger.to_file('Loss(G): %s | Loss(D): %s', self.G_loss.result().numpy(), self.D.loss_metric.result().numpy())

@@ -51,4 +51,4 @@ if __name__ == '__main__':
     model.pre_fit(train.batches, g_epochs=1, d_epochs=1)
 
     #
-    model.fit(train.batches, epochs=1, d_epochs=1)
+    model.fit(train.batches, epochs=10, d_epochs=5)
