@@ -31,25 +31,25 @@ if __name__ == '__main__':
     enc_train, enc_val, enc_test = l.split_data(encoded_tokens, 0.8, 0.1, 0.1, 0)
 
     # Creates Language Modeling datasets
-    train = LanguageModelingDataset(enc_train, batch_size=4)
-    val = LanguageModelingDataset(enc_val, batch_size=4)
+    train = LanguageModelingDataset(enc_train, batch_size=16)
+    val = LanguageModelingDataset(enc_val, batch_size=16)
 
     #
-    model = TSGANContrastive(encoder=encoder, vocab_size=corpus.vocab_size,
-                             embedding_size=64, hidden_size=128, temperature=0.5,
-                             n_pairs=25)
+    # model = TSGANContrastive(encoder=encoder, vocab_size=corpus.vocab_size,
+    #                          embedding_size=64, hidden_size=128, temperature=0.5,
+    #                          n_pairs=25)
 
-    # model = TSGANTriplet(encoder=encoder, vocab_size=corpus.vocab_size,
-    #                      embedding_size=64, hidden_size=128)
+    model = TSGANTriplet(encoder=encoder, vocab_size=corpus.vocab_size,
+                         embedding_size=64, hidden_size=128)
 
     # Compiles the model
-    model.compile(pre_d_optimizer=tf.optimizers.Adam(learning_rate=0.01),
+    model.compile(pre_d_optimizer=tf.optimizers.Adam(learning_rate=0.001),
                 pre_g_optimizer=tf.optimizers.Adam(learning_rate=0.001),
                 d_optimizer=tf.optimizers.Adam(learning_rate=0.001),
                 g_optimizer=tf.optimizers.Adam(learning_rate=0.001))
 
     #
-    model.pre_fit(train.batches, g_epochs=100, d_epochs=10)
+    model.pre_fit(train.batches, g_epochs=25, d_epochs=10)
 
     #
     model.fit(train.batches, epochs=25, d_epochs=1)

@@ -40,6 +40,6 @@ class TripletDiscriminator(TripletSiamese):
         # Overrides its parent class with any custom arguments if needed
         super(TripletDiscriminator, self).__init__(base=base, loss=loss, margin=margin,
                                                    soft=soft, distance_metric=distance_metric,
-                                                   name='D_Triplet')
+                                                   name='D_triplet')
 
         logger.info('Class overrided.')

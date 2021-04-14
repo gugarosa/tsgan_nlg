@@ -13,9 +13,9 @@ from core import TSGANContrastive, TSGANTriplet
 if __name__ == '__main__':
     # Common-based arguments
     n_tokens = 3
-    temp = 0.5
-    top_k = 10
-    top_p = 0.9
+    temp = 0.4
+    top_k = 25
+    top_p = 0.97
 
     # Model-based arguments
     model_name = 'tsgan'

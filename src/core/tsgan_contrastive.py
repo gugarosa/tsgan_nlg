@@ -23,16 +23,15 @@ class TSGANContrastive(Adversarial):
 
     """
 
-    def __init__(self, encoder=None, vocab_size=1, max_length=1, embedding_size=32, hidden_size=64,
+    def __init__(self, encoder=None, vocab_size=1, embedding_size=32, hidden_size=64,
                  temperature=0.5, n_pairs=100):
         """Initialization method.
 
         Args:
             encoder (IntegerEncoder): An index to vocabulary encoder for the generator.
             vocab_size (int): The size of the vocabulary for both discriminator and generator.
-            max_length (int): Maximum length of the sequences for the discriminator.
             embedding_size (int): The size of the embedding layer for both discriminator and generator.
-            hidden_size (int): The amount of hidden neurons for the generator.
+            hidden_size (int): The amount of hidden neurons for both discriminator and generator.
             temperature (float): Temperature value to sample the token.
             n_pairs (int): Number of pairs to feed to the discriminator.
 
@@ -236,7 +235,7 @@ class TSGANContrastive(Adversarial):
         """
 
         # Gathers the batch size and maximum sequence length
-        batch_size, max_length = x1.shape[0], x2.shape[1]
+        batch_size, max_length = x1.shape[0], x1.shape[1]
 
         # Calculates the reward mechanism
         rewards = self.D.predict(x1, x2)
