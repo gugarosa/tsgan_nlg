@@ -21,7 +21,9 @@ class ContrastiveDiscriminator(ContrastiveSiamese):
         """Initialization method.
 
         Args:
-            base (Base): Twin architecture.
+            vocab_size (int): Vocabulary size.
+            embedding_size (int): Embedding layer units.
+            hidden_size (int): Hidden layer units.
             margin (float): Radius around the embedding space.
             distance_metric (str): Distance metric.
 
@@ -29,7 +31,7 @@ class ContrastiveDiscriminator(ContrastiveSiamese):
 
         logger.info('Overriding class: Discriminator -> ContrastiveDiscriminator.')
 
-        #
+        # Defines the base architecture
         base = LSTM(vocab_size=vocab_size, embedding_size=embedding_size, hidden_size=hidden_size)
 
         # Overrides its parent class with any custom arguments if needed

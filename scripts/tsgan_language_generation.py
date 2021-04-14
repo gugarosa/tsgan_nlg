@@ -10,7 +10,6 @@ import csv
 import utils.pickler as p
 from core import TSGANContrastive, TSGANTriplet
 
-
 if __name__ == '__main__':
     # Common-based arguments
     n_tokens = 3
