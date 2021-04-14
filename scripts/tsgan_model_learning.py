@@ -11,6 +11,7 @@ from nalp.datasets import LanguageModelingDataset
 from nalp.encoders import IntegerEncoder
 
 import utils.loader as l
+import utils.pickler as p
 from core import TSGANContrastive, TSGANTriplet
 
 if __name__ == '__main__':
@@ -36,7 +37,7 @@ if __name__ == '__main__':
     #
     model = TSGANContrastive(encoder=encoder, vocab_size=corpus.vocab_size,
                              embedding_size=64, hidden_size=128, temperature=0.5,
-                             n_pairs=2)
+                             n_pairs=25)
 
     # model = TSGANTriplet(encoder=encoder, vocab_size=corpus.vocab_size,
     #                      embedding_size=64, hidden_size=128)
@@ -48,7 +49,13 @@ if __name__ == '__main__':
                 g_optimizer=tf.optimizers.Adam(learning_rate=0.001))
 
     #
-    model.pre_fit(train.batches, g_epochs=1, d_epochs=1)
+    model.pre_fit(train.batches, g_epochs=10, d_epochs=10)
 
     #
     model.fit(train.batches, epochs=10, d_epochs=5)
+
+    # Saves model and objects to files
+    output_path = 'outputs/tsgan'
+    model.save_weights(output_path, save_format='tf')
+    p.save_to_file(output_path, train_history=model.history,
+                   corpus=corpus, encoder=encoder, enc_test=enc_test)
