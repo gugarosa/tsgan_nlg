@@ -3,7 +3,7 @@
 
 import nalp.utils.logging as l
 from dualing.models import ContrastiveSiamese
-from dualing.models.base import CNN, MLP
+from dualing.models.base import LSTM
 
 logger = l.get_logger(__name__)
 
@@ -17,7 +17,7 @@ class ContrastiveDiscriminator(ContrastiveSiamese):
 
     """
 
-    def __init__(self, base=None, margin=1.0, distance_metric='L2'):
+    def __init__(self, vocab_size=1, embedding_size=32, hidden_size=64, margin=1.0, distance_metric='L2'):
         """Initialization method.
 
         Args:
@@ -29,13 +29,12 @@ class ContrastiveDiscriminator(ContrastiveSiamese):
 
         logger.info('Overriding class: Discriminator -> ContrastiveDiscriminator.')
 
-        # base = CNN(n_blocks=3, init_kernel=5, n_output=128)
-        base = MLP(n_hidden=(512, 256, 128))
+        #
+        base = LSTM(vocab_size=vocab_size, embedding_size=embedding_size, hidden_size=hidden_size)
 
         # Overrides its parent class with any custom arguments if needed
         super(ContrastiveDiscriminator, self).__init__(base=base, margin=margin,
                                                        distance_metric=distance_metric,
                                                        name='D_contrastive')
 
-        
         logger.info('Class overrided.')

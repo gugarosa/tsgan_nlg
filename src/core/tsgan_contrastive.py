@@ -41,7 +41,7 @@ class TSGANContrastive(Adversarial):
         logger.info('Overriding class: Adversarial -> TSGANContrastive.')
 
         # Creating the discriminator network
-        D = ContrastiveDiscriminator()
+        D = ContrastiveDiscriminator(vocab_size, embedding_size, hidden_size)
 
         # Creating the generator network
         G = LSTMGenerator(encoder, vocab_size, embedding_size, hidden_size)
