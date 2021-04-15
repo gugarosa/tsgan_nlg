@@ -2,12 +2,37 @@
 """
 
 import tensorflow as tf
+import utils.metrics as m
 
 
-def fine_tune_tsgan(model_name, model_obj, train, val, encoder, vocab_size, embedding_size, hidden_size,
-                    tau, n_pairs, pre_d_lr, pre_g_lr, d_lr, g_lr, pre_g_epochs, pre_d_epochs,
+def fine_tune_tsgan(model_name, model_obj, train, val_tokens, encoder, vocab_size, embedding_size, hidden_size,
+                    tau, n_pairs, pre_d_lr, pre_g_lr, d_lr, g_lr, pre_d_epochs, pre_g_epochs,
                     epochs, d_epochs, n_tokens, temp, top_k, top_p):
     """Wraps the fine-tuning procedure of TSGAN-based models.
+
+    Args:
+        model_name (str): Model's identifier.
+        model_obj (TSGAN): Model's object.
+        train (LanguageModellingDataset): Training dataset.
+        val_tokens (list): List of validation tokens.
+        encoder (IntegerEncoder): An index to vocabulary encoder for the generator.
+        vocab_size (int): The size of the vocabulary for both discriminator and generator.
+        embedding_size (int): The size of the embedding layer for both discriminator and generator.
+        hidden_size (int): The amount of hidden neurons for both discriminator and generator.
+        tau (float): Temperature value to sample the token inside TSGAN.
+        n_pairs (int): Number of pairs to feed to the discriminator.
+        pre_d_lr (float): Pre-train discriminator learning rate.
+        pre_g_lr (float): Pre-train generator learning rate.
+        d_lr (float): Discriminator learning rate.
+        g_lr (float): Generator learning rate.
+        pre_d_epochs (int): Amount of pre-training discriminator epochs.
+        pre_g_epochs (int): Amount of pre-training generator epochs.
+        epochs (int): Amount of training epochs.
+        d_epochs (int): Amount of discriminator training epochs.
+        n_tokens (int): How many tokens to be used as start string.
+        temp (float): Temperature sampling.
+        top_k (int): Amount of `k` for top-k sampling.
+        top_p (float): Probability for nucleus sampling.
 
     """
 
@@ -18,7 +43,7 @@ def fine_tune_tsgan(model_name, model_obj, train, val, encoder, vocab_size, embe
             w (float): Array of variables.
 
         Returns:
-            BLEU score.
+            1 - average of BLEU scores.
 
         """
 
@@ -69,7 +94,7 @@ def fine_tune_tsgan(model_name, model_obj, train, val, encoder, vocab_size, embe
         tokens, greedy_tokens, temp_tokens, top_tokens = [], [], [], []
 
         # Iterates over every sentence in testing set
-        for token in val:
+        for token in val_tokens:
             # Decodes the token back to words
             decoded_token = encoder.decode(token)
 
@@ -84,11 +109,16 @@ def fine_tune_tsgan(model_name, model_obj, train, val, encoder, vocab_size, embe
                                                       k=top_k, p=top_p)
 
             # Appends the outputs to lists
-            tokens.append(' '.join(decoded_token))
+            tokens.append([' '.join(decoded_token)])
             greedy_tokens.append(' '.join(start_token + greedy_token))
             temp_tokens.append(' '.join(start_token + temp_token))
             top_tokens.append(' '.join(start_token + top_token))
 
-        return 1
+        # Calculates BLEU-based metrics
+        greedy_bleu = m.bleu_score(greedy_tokens, tokens, n_grams=3)['bleu']
+        temp_bleu = m.bleu_score(temp_tokens, tokens, n_grams=3)['bleu']
+        top_bleu = m.bleu_score(top_tokens, tokens, n_grams=3)['bleu']
+
+        return 1 - (greedy_bleu + temp_bleu + top_bleu) / 3
 
     return f

@@ -137,7 +137,7 @@ if __name__ == '__main__':
 
     # Fits the model and saves its weights
     history = model.fit(train.batches, epochs=epochs, validation_data=val.batches)
-    
+
     # Saves model and objects to files
     model.save_weights(output_path, save_format='tf')
     p.save_to_file(output_path, train_history=history.history,

@@ -160,7 +160,7 @@ if __name__ == '__main__':
     # Initializes the optimization target
     opt_fn = t.fine_tune_tsgan(model_name, model_obj, train, enc_val, encoder, corpus.vocab_size,
                                embedding_size, hidden_size, tau, n_pairs, pre_d_lr,
-                               pre_g_lr, d_lr, g_lr, pre_g_epochs, pre_d_epochs, epochs,
+                               pre_g_lr, d_lr, g_lr, pre_d_epochs, pre_g_epochs, epochs,
                                d_epochs, n_tokens, temp, top_k, top_p)
 
     # Runs the optimization task
