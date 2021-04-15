@@ -2,6 +2,7 @@
 """
 
 import statys.plotters.significance as s
+import opytimizer.visualization.convergence as c
 
 
 def plot_wilcoxon_report(report, color_map='YlOrRd', labels=None):
@@ -21,3 +22,19 @@ def plot_wilcoxon_report(report, color_map='YlOrRd', labels=None):
     # Plots the p-values
     s.plot_p_value(report, color_map=color_map, labels=labels,
                    title='Wilcoxon Signed-Rank Test ($p$-values)')
+
+
+def plot_args_convergence(*args, labels=None, title=None, subtitle=None, xlabel='iteration', ylabel='value'):
+    """Plots the convergence of a set of arguments.
+
+    Args:
+        labels (list): List of defined labels.
+        title (str): Title of the plot.
+        subtitle (str): Subtitle of the plot.
+        xlabel (str): Axis `x` label.
+        ylabel (str): Axis `y` label.
+
+    """
+
+    # Plots the desired arguments
+    c.plot(*args, labels=labels, title=title, subtitle=subtitle, xlabel=xlabel, ylabel=ylabel)
