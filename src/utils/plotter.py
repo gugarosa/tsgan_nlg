@@ -1,8 +1,8 @@
 """Convergence, statistical and every type of visual-based plots.
 """
 
-import statys.plotters.significance as s
 import opytimizer.visualization.convergence as c
+import statys.plotters.significance as s
 
 
 def plot_wilcoxon_report(report, color_map='YlOrRd', labels=None):
