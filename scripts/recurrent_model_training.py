@@ -110,10 +110,11 @@ if __name__ == '__main__':
     encoded_tokens = encoder.encode(corpus.tokens)
 
     # Splits the tokens
-    enc_train, _, enc_test = l.split_data(encoded_tokens, train_split, val_split, test_split, seed)
+    enc_train, enc_val, enc_test = l.split_data(encoded_tokens, train_split, val_split, test_split, seed)
 
     # Creates Language Modeling datasets
     train = LanguageModelingDataset(enc_train, batch_size=batch_size)
+    val = LanguageModelingDataset(enc_val, batch_size=batch_size)
 
     # Checks if supplied model is an RMC
     if model_name == 'rmc':
