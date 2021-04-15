@@ -17,7 +17,6 @@ import optimization.heuristics as h
 import optimization.target as t
 import optimization.wrapper as w
 import utils.loader as l
-import utils.pickler as p
 
 
 def get_arguments():
@@ -123,14 +122,14 @@ if __name__ == '__main__':
     pre_g_epochs = args.pre_g_epochs
     epochs = args.epochs
     d_epochs = args.d_epochs
-    output_path = f'outputs/opt_{model_name}'
 
     # Gathering optimization variables
-    meta = args.mh
-    meta_heuristic = h.get_heuristic(meta).obj
-    hyperparams = h.get_heuristic(meta).hyperparams
+    meta_name = args.mh
+    meta_obj = h.get_heuristic(meta_name).obj
+    hyperparams = h.get_heuristic(meta_name).hyperparams
     n_agents = args.n_agents
     n_iterations = args.n_iter
+    output_path = f'outputs/{meta_name}_{model_name}'
 
     # Defines numpy seed
     np.random.seed(seed)
@@ -165,7 +164,7 @@ if __name__ == '__main__':
                                d_epochs, n_tokens, temp, top_k, top_p)
 
     # Runs the optimization task
-    history = w.start_opt(meta_heuristic, opt_fn, n_agents, n_variables, n_iterations, lb, ub, hyperparams)
+    history = w.start_opt(meta_name, meta_obj, opt_fn, n_agents, n_variables, n_iterations, lb, ub, hyperparams)
 
     # Saves the history object to an output file
     history.save(output_path + '.pkl')

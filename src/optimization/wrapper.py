@@ -7,10 +7,11 @@ from opytimizer.spaces.search import SearchSpace
 from opytimizer.spaces.tree import TreeSpace
 
 
-def start_opt(opt, target, n_agents, n_variables, n_iterations, lb, ub, hyperparams):
+def start_opt(opt_name, opt, target, n_agents, n_variables, n_iterations, lb, ub, hyperparams):
     """Abstracts all Opytimizer's mechanisms into a single method.
 
     Args:
+        opt_name (str): Name of optimizer.
         opt (Optimizer): An Optimizer-child class.
         target (callable): The method to be optimized.
         n_agents (int): Number of agents.
@@ -26,7 +27,7 @@ def start_opt(opt, target, n_agents, n_variables, n_iterations, lb, ub, hyperpar
     """
 
     # Checks if optimization algorithm is GP
-    if opt.algorithm == 'gp':
+    if opt_name == 'gp':
         # Creates a TreeSpace
         space = TreeSpace(n_trees=n_agents, n_terminals=5, n_variables=n_variables,
                           n_iterations=n_iterations, min_depth=2, max_depth=5,
