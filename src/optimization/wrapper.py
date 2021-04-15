@@ -3,7 +3,6 @@
 
 from opytimizer import Opytimizer
 from opytimizer.core.function import Function
-from opytimizer.core.optimizer import Optimizer
 from opytimizer.spaces.search import SearchSpace
 from opytimizer.spaces.tree import TreeSpace
 
@@ -32,7 +31,7 @@ def start_opt(opt, target, n_agents, n_variables, n_iterations, lb, ub, hyperpar
         space = TreeSpace(n_trees=n_agents, n_terminals=5, n_variables=n_variables,
                           n_iterations=n_iterations, min_depth=2, max_depth=5,
                           functions=['SUM', 'SUB', 'MUL', 'DIV'], lower_bound=lb, upper_bound=ub)
-    
+
     # If optimization algorithm is something else
     else:
         # Creates the SearchSpace

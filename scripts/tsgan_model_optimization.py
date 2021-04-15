@@ -7,12 +7,15 @@ sys.path.append(os.path.abspath('../src'))
 
 import argparse
 
-import tensorflow as tf
+import numpy as np
 from nalp.corpus import SentenceCorpus
 from nalp.datasets import LanguageModelingDataset
 from nalp.encoders import IntegerEncoder
 
 import generation.adversarial_models as a
+import optimization.heuristics as h
+import optimization.target as t
+import optimization.wrapper as w
 import utils.loader as l
 import utils.pickler as p
 
@@ -25,7 +28,9 @@ def get_arguments():
 
     """
 
-    parser = argparse.ArgumentParser(usage='Trains TSGAN-based models over NLG tasks.')
+    parser = argparse.ArgumentParser(usage='Optimizes TSGAN-based models over NLG tasks.')
+
+    parser.add_argument('mh', help='Meta-heuristic identifier', choices=['ba', 'cs', 'fa', 'gp', 'pso'])
 
     parser.add_argument('model', help='Type of model', choices=['tsgan_contrastive', 'tsgan_triplet'])
 
@@ -37,6 +42,14 @@ def get_arguments():
     parser.add_argument('-val_split', help='Percentage of the validation set', type=float, default=0.1)
 
     parser.add_argument('-test_split', help='Percentage of the testing set', type=float, default=0.1)
+
+    parser.add_argument('-n_tokens', help='How many tokens to be used as start string', type=int, default=3)
+
+    parser.add_argument('-temp', help='Temperature sampling', type=float, default=0.5)
+
+    parser.add_argument('-top_k', help='Amount of `k` for top-k sampling', type=int, default=0)
+
+    parser.add_argument('-top_p', help='Probability for nucleus sampling', type=float, default=1.0)
 
     parser.add_argument('-min_frequency', help='Minimum frequency of tokens', type=int, default=1)
 
@@ -60,13 +73,17 @@ def get_arguments():
 
     parser.add_argument('-g_lr', help='Generator learning rate', type=float, default=0.001)
 
-    parser.add_argument('-pre_d_epochs', help='Amount of pre-training discriminator epochs', type=int, default=10)
+    parser.add_argument('-pre_d_epochs', help='Amount of pre-training discriminator epochs', type=int, default=1)
 
-    parser.add_argument('-pre_g_epochs', help='Amount of pre-training generator epochs', type=int, default=10)
+    parser.add_argument('-pre_g_epochs', help='Amount of pre-training generator epochs', type=int, default=1)
 
-    parser.add_argument('-epochs', help='Amount of training epochs', type=int, default=10)
+    parser.add_argument('-epochs', help='Amount of training epochs', type=int, default=1)
 
-    parser.add_argument('-d_epochs', help='Amount of discriminator training epochs', type=int, default=10)
+    parser.add_argument('-d_epochs', help='Amount of discriminator training epochs', type=int, default=1)
+
+    parser.add_argument('-n_agents', help='Number of meta-heuristic agents', type=int, default=2)
+
+    parser.add_argument('-n_iter', help='Number of meta-heuristic iterations', type=int, default=1)
 
     parser.add_argument('-seed', help='Seed identifier', type=int, default=0)
 
@@ -82,6 +99,10 @@ if __name__ == '__main__':
     train_split = args.train_split
     val_split = args.val_split
     test_split = args.test_split
+    n_tokens = args.n_tokens
+    temp = args.temp
+    top_k = args.top_k
+    top_p = args.top_p
     min_frequency = args.min_frequency
     max_pad_length = args.max_pad_length
     seed = args.seed
@@ -102,7 +123,17 @@ if __name__ == '__main__':
     pre_g_epochs = args.pre_g_epochs
     epochs = args.epochs
     d_epochs = args.d_epochs
-    output_path = f'outputs/{model_name}'
+    output_path = f'outputs/opt_{model_name}'
+
+    # Gathering optimization variables
+    meta = args.mh
+    meta_heuristic = h.get_heuristic(meta).obj
+    hyperparams = h.get_heuristic(meta).hyperparams
+    n_agents = args.n_agents
+    n_iterations = args.n_iter
+
+    # Defines numpy seed
+    np.random.seed(seed)
 
     # Loads and tokenizes the data
     data = l.load_data(dataset)
@@ -117,36 +148,24 @@ if __name__ == '__main__':
     encoded_tokens = encoder.encode(corpus.tokens)
 
     # Splits the tokens
-    enc_train, _, enc_test = l.split_data(encoded_tokens, train_split, val_split, test_split, seed)
+    enc_train, enc_val, _ = l.split_data(encoded_tokens, train_split, val_split, test_split, seed)
 
     # Creates Language Modeling datasets
     train = LanguageModelingDataset(enc_train, batch_size=batch_size)
 
-    # Checks if supplied model is a TSGAN with Contrastive Loss
-    if model_name == 'tsgan_contrastive':
-        # Instantiates the model
-        model = model_obj(encoder=encoder, vocab_size=corpus.vocab_size, embedding_size=embedding_size,
-                          hidden_size=hidden_size, temperature=tau, n_pairs=n_pairs)
+    # Defines the optimization variables bounds
+    n_variables = 1
+    lb = [0]
+    ub = [1]
 
-    # Checks if supplied model is a TSGAN with Triplet Loss
-    elif model_name == 'tsgan_triplet':
-        # Instantiates the model
-        model = model_obj(encoder=encoder, vocab_size=corpus.vocab_size, embedding_size=embedding_size,
-                          hidden_size=hidden_size, temperature=tau)
+    # Initializes the optimization target
+    opt_fn = t.fine_tune_tsgan(model_name, model_obj, train, enc_val, encoder, corpus.vocab_size,
+                               embedding_size, hidden_size, tau, n_pairs, pre_d_lr,
+                               pre_g_lr, d_lr, g_lr, pre_g_epochs, pre_d_epochs, epochs,
+                               d_epochs, n_tokens, temp, top_k, top_p)
 
-    # Compiles the model
-    model.compile(pre_d_optimizer=tf.optimizers.Adam(learning_rate=pre_d_lr),
-                  pre_g_optimizer=tf.optimizers.Adam(learning_rate=pre_g_lr),
-                  d_optimizer=tf.optimizers.Adam(learning_rate=d_lr),
-                  g_optimizer=tf.optimizers.Adam(learning_rate=g_lr))
+    # Runs the optimization task
+    history = w.start_opt(meta_heuristic, opt_fn, n_agents, n_variables, n_iterations, lb, ub, hyperparams)
 
-    # Pre-fits the model
-    model.pre_fit(train.batches, g_epochs=pre_g_epochs, d_epochs=pre_d_epochs)
-
-    # Fits the model
-    model.fit(train.batches, epochs=epochs, d_epochs=d_epochs)
-
-    # Saves model and objects to files
-    model.save_weights(output_path, save_format='tf')
-    p.save_to_file(output_path, train_history=model.history,
-                   corpus=corpus, encoder=encoder, enc_test=enc_test)
+    # Saves the history object to an output file
+    history.save(output_path + '.pkl')
