@@ -201,7 +201,7 @@ if __name__ == '__main__':
 
         # Fits the model
         model.fit(train.batches, epochs=epochs, d_epochs=d_epochs)
-    
+
     # Checks if supplied model is a SeqGAN
     elif model_name == 'seqgan':
         # Pre-fits the model
@@ -209,7 +209,7 @@ if __name__ == '__main__':
 
         # Fits the model
         model.fit(train.batches, epochs=epochs, g_epochs=g_epochs, d_epochs=d_epochs, n_rollouts=n_rollouts)
-    
+
     # Saves model and objects to files
     model.save_weights(output_path, save_format='tf')
     p.save_to_file(output_path, train_history=model.history,
