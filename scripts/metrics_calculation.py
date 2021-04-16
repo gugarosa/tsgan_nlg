@@ -1,7 +1,7 @@
+# Caveat to allow running from inside or outside scripts package
 import os
 import sys
 
-# Caveat to allow running from inside or outside scripts package
 sys.path.append(os.path.abspath('./src'))
 sys.path.append(os.path.abspath('../src'))
 
@@ -22,7 +22,7 @@ def get_arguments():
 
     parser = argparse.ArgumentParser(usage='Calculates a set of metrics from .csv files with generated texts.')
 
-    parser.add_argument('csv_file', help='Input file .csv with generated text', type=str)
+    parser.add_argument('csv_file', help='Input .csv file with generated text', type=str)
 
     return parser.parse_args()
 
@@ -35,7 +35,7 @@ if __name__ == '__main__':
     csv_file = args.csv_file
     output_csv_file = os.path.splitext(csv_file)[0] + '_metrics.csv'
 
-    # Reads a dataframe from a .csv file
+    # Reads a .csv file into a dataframe
     df = pd.read_csv(csv_file)
 
     # Gathers each reference and prediction
