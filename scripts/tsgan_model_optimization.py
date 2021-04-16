@@ -129,7 +129,7 @@ if __name__ == '__main__':
     hyperparams = h.get_heuristic(meta_name).hyperparams
     n_agents = args.n_agents
     n_iterations = args.n_iter
-    output_path = f'outputs/{meta_name}_{model_name}'
+    output_path = f'outputs/{model_name}_{meta_name}'
 
     # Defines numpy seed
     np.random.seed(seed)

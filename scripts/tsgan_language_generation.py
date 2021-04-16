@@ -6,7 +6,8 @@ sys.path.append(os.path.abspath('./src'))
 sys.path.append(os.path.abspath('../src'))
 
 import argparse
-import csv
+
+import pandas as pd
 
 import generation.adversarial_models as a
 import utils.pickler as p
@@ -63,6 +64,7 @@ if __name__ == '__main__':
     hidden_size = args.hidden_size
     tau = args.tau
     n_pairs = args.n_pairs
+    output_path = f'outputs/{model_name}_nlg.csv'
 
     # Loads pre-pickled objects
     corpus = p.load_from_file(f'outputs/{model_name}_corpus.pkl')
@@ -109,11 +111,11 @@ if __name__ == '__main__':
         temp_tokens.append(' '.join(start_token + temp_token))
         top_tokens.append(' '.join(start_token + top_token))
 
-    # Opens an output .csv file
-    with open(f'outputs/{model_name}_nlg.csv', 'w') as f:
-        # Creates the .csv writer
-        writer = csv.writer(f)
+    # Converts lists to a dataframe
+    df = pd.DataFrame({'reference': tokens,
+                       'greedy_search': greedy_tokens,
+                       'temperature_sampling': temp_tokens,
+                       'top_sampling': top_tokens})
 
-        # Dumps the data
-        writer.writerow(['reference', 'greedy_search', 'temperature_sampling', 'top_sampling'])
-        writer.writerows(zip(tokens, greedy_tokens, temp_tokens, top_tokens))
+    # Saves the dataframe to an output .csv file
+    df.to_csv(output_path, index=False)

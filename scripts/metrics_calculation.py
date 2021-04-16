@@ -6,7 +6,8 @@ sys.path.append(os.path.abspath('./src'))
 sys.path.append(os.path.abspath('../src'))
 
 import argparse
-import csv
+
+import pandas as pd
 
 import utils.metrics as m
 
@@ -34,23 +35,15 @@ if __name__ == '__main__':
     csv_file = args.csv_file
     output_csv_file = os.path.splitext(csv_file)[0] + '_metrics.csv'
 
-    # Instantiates a set of lists for references and predictions
-    bleu_refs, meteor_rouge_refs, = [], []
-    greedy_preds, temp_preds, top_preds = [], [], []
+    # Reads a dataframe from a .csv file
+    df = pd.read_csv(csv_file)
 
-    # Opens the .csv file
-    with open(csv_file, 'r') as f:
-        # Defines the reader object
-        reader = csv.DictReader(f)
-
-        # Iterates over every row
-        for row in reader:
-            # Appends each row information to its proper list
-            bleu_refs.append([row['reference']])
-            meteor_rouge_refs.append(row['reference'])
-            greedy_preds.append(row['greedy_search'])
-            temp_preds.append(row['temperature_sampling'])
-            top_preds.append(row['top_sampling'])
+    # Gathers each reference and prediction
+    meteor_rouge_refs = df['reference'].tolist()
+    bleu_refs = [[ref] for ref in meteor_rouge_refs]
+    greedy_preds = df['greedy_search'].tolist()
+    temp_preds = df['temperature_sampling'].tolist()
+    top_preds = df['top_sampling'].tolist()
 
     # Calculates a set of BLEU-based metrics
     bleu_greedy_1 = m.bleu_score(greedy_preds, bleu_refs, n_grams=1)['bleu']
@@ -73,21 +66,17 @@ if __name__ == '__main__':
     rouge_temp = m.rouge_score(temp_preds, meteor_rouge_refs)
     rouge_top = m.rouge_score(top_preds, meteor_rouge_refs)
 
-    # Opens the output .csv file
-    with open(output_csv_file, 'w') as f:
-        # Creates the .csv writer
-        writer = csv.writer(f)
+    # Converts lists to a dataframe
+    df = pd.DataFrame({'metric': ['BLEU-1', 'BLEU-2', 'BLEU-3', 'METEOR', 'ROUGE-1', 'ROUGE-2', 'ROUGE-L'],
+                       'greedy_search': [bleu_greedy_1, bleu_greedy_2, bleu_greedy_3, meteor_greedy,
+                                        rouge_greedy["rouge1"].mid.fmeasure, rouge_greedy["rouge2"].mid.fmeasure,
+                                        rouge_greedy["rougeL"].mid.fmeasure],
+                       'temperature_sampling': [bleu_temp_1, bleu_temp_2, bleu_temp_3, meteor_temp,
+                                        rouge_temp["rouge1"].mid.fmeasure, rouge_temp["rouge2"].mid.fmeasure,
+                                        rouge_temp["rougeL"].mid.fmeasure],
+                       'top_sampling': [bleu_top_1, bleu_top_2, bleu_top_3, meteor_top,
+                                        rouge_top["rouge1"].mid.fmeasure, rouge_top["rouge2"].mid.fmeasure,
+                                        rouge_top["rougeL"].mid.fmeasure]})
 
-        # Dumps the data
-        writer.writerow(['metric', 'greedy_search',
-                        'temperature sampling', 'top sampling'])
-        writer.writerow(['BLEU-1', bleu_greedy_1, bleu_temp_1, bleu_top_1])
-        writer.writerow(['BLEU-2', bleu_greedy_2, bleu_temp_2, bleu_top_2])
-        writer.writerow(['BLEU-3', bleu_greedy_3, bleu_temp_3, bleu_top_3])
-        writer.writerow(['METEOR', meteor_greedy, meteor_temp, meteor_top])
-        writer.writerow(['ROUGE-1', rouge_greedy["rouge1"].mid.fmeasure,
-                        rouge_temp["rouge1"].mid.fmeasure, rouge_top["rouge1"].mid.fmeasure])
-        writer.writerow(['ROUGE-2', rouge_greedy["rouge2"].mid.fmeasure,
-                        rouge_temp["rouge2"].mid.fmeasure, rouge_top["rouge2"].mid.fmeasure])
-        writer.writerow(['ROUGE-L', rouge_greedy["rougeL"].mid.fmeasure,
-                        rouge_temp["rougeL"].mid.fmeasure, rouge_top["rougeL"].mid.fmeasure])
+    # Saves the dataframe to an output .csv file
+    df.to_csv(output_csv_file, index=False)

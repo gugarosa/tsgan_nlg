@@ -6,7 +6,8 @@ sys.path.append(os.path.abspath('./src'))
 sys.path.append(os.path.abspath('../src'))
 
 import argparse
-import csv
+
+import pandas as pd
 
 import generation.recurrent_models as r
 import utils.pickler as p
@@ -64,6 +65,7 @@ if __name__ == '__main__':
     model_obj = r.get_recurrent_model(model_name).obj
     embedding_size = args.embedding_size
     hidden_size = args.hidden_size
+    output_path = f'outputs/{model_name}_nlg.csv'
 
     # RMC-based arguments
     n_slots = args.n_slots
@@ -118,11 +120,12 @@ if __name__ == '__main__':
         temp_tokens.append(' '.join(start_token + temp_token))
         top_tokens.append(' '.join(start_token + top_token))
 
-    # Opens an output .csv file
-    with open(f'outputs/{model_name}_nlg.csv', 'w') as f:
-        # Creates the .csv writer
-        writer = csv.writer(f)
+    # Converts lists to a dataframe
+    df = pd.DataFrame({'reference': tokens,
+                       'greedy_search': greedy_tokens,
+                       'temperature_sampling': temp_tokens,
+                       'top_sampling': top_tokens})
 
-        # Dumps the data
-        writer.writerow(['reference', 'greedy_search', 'temperature_sampling', 'top_sampling'])
-        writer.writerows(zip(tokens, greedy_tokens, temp_tokens, top_tokens))
+    # Saves the dataframe to an output .csv file
+    df.to_csv(output_path, index=False)
+ 
