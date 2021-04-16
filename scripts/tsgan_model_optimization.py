@@ -82,7 +82,7 @@ def get_arguments():
 
     parser.add_argument('-n_agents', help='Number of meta-heuristic agents', type=int, default=2)
 
-    parser.add_argument('-n_iter', help='Number of meta-heuristic iterations', type=int, default=1)
+    parser.add_argument('-n_iter', help='Number of meta-heuristic iterations', type=int, default=5)
 
     parser.add_argument('-seed', help='Seed identifier', type=int, default=0)
 
@@ -153,9 +153,9 @@ if __name__ == '__main__':
     train = LanguageModelingDataset(enc_train, batch_size=batch_size)
 
     # Defines the optimization variables bounds
-    n_variables = 1
-    lb = [0]
-    ub = [1]
+    n_variables = 3
+    lb = [0, 0, 0]
+    ub = [1, 1, 1]
 
     # Initializes the optimization target
     opt_fn = t.fine_tune_tsgan(model_name, model_obj, train, enc_val, encoder, corpus.vocab_size,
