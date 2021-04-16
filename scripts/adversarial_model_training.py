@@ -158,8 +158,8 @@ if __name__ == '__main__':
                           embedding_size=embedding_size, hidden_size=hidden_size,
                           tau=tau)
 
-    # Checks if supplied model is a MaliGAN
-    elif model_name == 'maligan':
+    # Checks if supplied model is a MaliGAN or SeqGAN
+    elif model_name in ['maligan', 'seqgan']:
         # Instantiates the model
         model = model_obj(encoder=encoder, vocab_size=corpus.vocab_size, max_length=max_pad_length,
                           embedding_size=embedding_size, hidden_size=hidden_size, n_filters=n_filters,
@@ -172,13 +172,6 @@ if __name__ == '__main__':
                           embedding_size=embedding_size, n_slots=n_slots, n_heads=n_heads,
                           head_size=head_size, n_blocks=n_blocks, n_layers=n_layers, n_filters=n_filters,
                           filters_size=filters_size, dropout_rate=dropout, tau=tau)
-
-    # Checks if supplied model is a SeqGAN
-    elif model_name == 'seqgan':
-        # Instantiates the model
-        model = model_obj(encoder=encoder, vocab_size=corpus.vocab_size, max_length=max_pad_length,
-                          embedding_size=embedding_size, hidden_size=hidden_size, n_filters=n_filters,
-                          filters_size=filters_size, dropout_rate=dropout, temperature=tau)
 
     # Compiles the model
     model.compile(pre_optimizer=tf.optimizers.Adam(learning_rate=pre_lr),

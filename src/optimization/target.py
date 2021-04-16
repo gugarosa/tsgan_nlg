@@ -48,23 +48,30 @@ def fine_tune_tsgan(model_name, model_obj, train, val_tokens, encoder, vocab_siz
 
         """
 
+        # Gathers current optimization parameters
+        w_g_lr = w[0][0]
+        w_d_lr = w[1][0]
+        w_embedding_size = int(w[2][0])
+        w_hidden_size = int(w[3][0])
+        w_tau = int(w[4][0])
+
         # Checks if supplied model is a TSGAN with Contrastive Loss
         if model_name == 'tsgan_contrastive':
             # Instantiates the model
-            model = model_obj(encoder=encoder, vocab_size=vocab_size, embedding_size=embedding_size,
-                              hidden_size=hidden_size, temperature=tau, n_pairs=n_pairs)
+            model = model_obj(encoder=encoder, vocab_size=vocab_size, embedding_size=w_embedding_size,
+                              hidden_size=w_hidden_size, temperature=w_tau, n_pairs=n_pairs)
 
         # Checks if supplied model is a TSGAN with Triplet Loss
         elif model_name == 'tsgan_triplet':
             # Instantiates the model
-            model = model_obj(encoder=encoder, vocab_size=vocab_size, embedding_size=embedding_size,
-                              hidden_size=hidden_size, temperature=tau)
+            model = model_obj(encoder=encoder, vocab_size=vocab_size, embedding_size=w_embedding_size,
+                              hidden_size=w_hidden_size, temperature=w_tau)
 
         # Compiles the model
         model.compile(pre_d_optimizer=tf.optimizers.Adam(learning_rate=pre_d_lr),
                       pre_g_optimizer=tf.optimizers.Adam(learning_rate=pre_g_lr),
-                      d_optimizer=tf.optimizers.Adam(learning_rate=d_lr),
-                      g_optimizer=tf.optimizers.Adam(learning_rate=g_lr))
+                      d_optimizer=tf.optimizers.Adam(learning_rate=w_d_lr),
+                      g_optimizer=tf.optimizers.Adam(learning_rate=w_g_lr))
 
         # Pre-fits the model
         model.pre_fit(train.batches, g_epochs=pre_g_epochs, d_epochs=pre_d_epochs)
@@ -78,14 +85,14 @@ def fine_tune_tsgan(model_name, model_obj, train, val_tokens, encoder, vocab_siz
         # Re-creates the objects
         if model_name == 'tsgan_contrastive':
             # Instantiates the model
-            model = model_obj(encoder=encoder, vocab_size=vocab_size, embedding_size=embedding_size,
-                              hidden_size=hidden_size, temperature=tau, n_pairs=n_pairs)
+            model = model_obj(encoder=encoder, vocab_size=vocab_size, embedding_size=w_embedding_size,
+                              hidden_size=w_hidden_size, temperature=w_tau, n_pairs=n_pairs)
 
         # Checks if supplied model is a TSGAN with Triplet Loss
         elif model_name == 'tsgan_triplet':
             # Instantiates the model
-            model = model_obj(encoder=encoder, vocab_size=vocab_size, embedding_size=embedding_size,
-                              hidden_size=hidden_size, temperature=tau)
+            model = model_obj(encoder=encoder, vocab_size=vocab_size, embedding_size=w_embedding_size,
+                              hidden_size=w_hidden_size, temperature=w_tau)
 
         # Loads the weights and build the generator
         model.load_weights('outputs/temp_opt').expect_partial()

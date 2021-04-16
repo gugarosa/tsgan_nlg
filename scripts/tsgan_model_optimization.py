@@ -153,9 +153,10 @@ if __name__ == '__main__':
     train = LanguageModelingDataset(enc_train, batch_size=batch_size)
 
     # Defines the optimization variables bounds
-    n_variables = 3
-    lb = [0, 0, 0]
-    ub = [1, 1, 1]
+    # g_lr, d_lr, embedding_size, hidden_size, tau
+    n_variables = 5
+    lb = [0.0001, 0.0001, 2, 2, 1]
+    ub = [0.1, 0.1, 256, 512, 9]
 
     # Initializes the optimization target
     opt_fn = t.fine_tune_tsgan(model_name, model_obj, train, enc_val, encoder, corpus.vocab_size,

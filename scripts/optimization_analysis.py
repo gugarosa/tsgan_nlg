@@ -8,10 +8,9 @@ sys.path.append(os.path.abspath('../src'))
 import argparse
 
 import numpy as np
+from opytimizer.utils.history import History
 
 import utils.plotter as p
-
-from opytimizer.utils.history import History
 
 
 def load_history_wrapper(input_file):
