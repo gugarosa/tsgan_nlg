@@ -150,7 +150,7 @@ if __name__ == '__main__':
         top_tokens.append(' '.join(start_token + top_token))
 
     # Opens an output .csv file
-    with open(f'outputs/{model_name}.csv', 'w') as f:
+    with open(f'outputs/{model_name}_nlg.csv', 'w') as f:
         # Creates the .csv writer
         writer = csv.writer(f)
 

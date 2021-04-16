@@ -1,7 +1,7 @@
-# Caveat to allow running from inside or outside scripts package
 import os
 import sys
 
+# Caveat to allow running from inside or outside scripts package
 sys.path.append(os.path.abspath('./src'))
 sys.path.append(os.path.abspath('../src'))
 
@@ -32,6 +32,7 @@ if __name__ == '__main__':
 
     # Common-based arguments
     csv_file = args.csv_file
+    output_csv_file = os.path.splitext(csv_file)[0] + '_metrics.csv'
 
     # Instantiates a set of lists for references and predictions
     bleu_refs, meteor_rouge_refs, = [], []
@@ -72,14 +73,21 @@ if __name__ == '__main__':
     rouge_temp = m.rouge_score(temp_preds, meteor_rouge_refs)
     rouge_top = m.rouge_score(top_preds, meteor_rouge_refs)
 
-    print('greedy_search, temperature sampling, top sampling')
-    print(f'BLEU-1: {bleu_greedy_1}, {bleu_temp_1}, {bleu_top_1}')
-    print(f'BLEU-2: {bleu_greedy_2}, {bleu_temp_2}, {bleu_top_2}')
-    print(f'BLEU-3: {bleu_greedy_3}, {bleu_temp_3}, {bleu_top_3}')
-    print(f'METEOR: {meteor_greedy}, {meteor_temp}, {meteor_top}')
-    print(f'ROUGE-1: {rouge_greedy["rouge1"].mid.fmeasure}, {rouge_temp["rouge1"].mid.fmeasure}, '
-          f'{rouge_top["rouge1"].mid.fmeasure}')
-    print(f'ROUGE-2: {rouge_greedy["rouge2"].mid.fmeasure}, {rouge_temp["rouge2"].mid.fmeasure}, '
-          f'{rouge_top["rouge2"].mid.fmeasure}')
-    print(f'ROUGE-L: {rouge_greedy["rougeL"].mid.fmeasure}, {rouge_temp["rougeL"].mid.fmeasure}, '
-          f'{rouge_top["rougeL"].mid.fmeasure}')
+    # Opens the output .csv file
+    with open(output_csv_file, 'w') as f:
+        # Creates the .csv writer
+        writer = csv.writer(f)
+
+        # Dumps the data
+        writer.writerow(['metric', 'greedy_search',
+                        'temperature sampling', 'top sampling'])
+        writer.writerow(['BLEU-1', bleu_greedy_1, bleu_temp_1, bleu_top_1])
+        writer.writerow(['BLEU-2', bleu_greedy_2, bleu_temp_2, bleu_top_2])
+        writer.writerow(['BLEU-3', bleu_greedy_3, bleu_temp_3, bleu_top_3])
+        writer.writerow(['METEOR', meteor_greedy, meteor_temp, meteor_top])
+        writer.writerow(['ROUGE-1', rouge_greedy["rouge1"].mid.fmeasure,
+                        rouge_temp["rouge1"].mid.fmeasure, rouge_top["rouge1"].mid.fmeasure])
+        writer.writerow(['ROUGE-2', rouge_greedy["rouge2"].mid.fmeasure,
+                        rouge_temp["rouge2"].mid.fmeasure, rouge_top["rouge2"].mid.fmeasure])
+        writer.writerow(['ROUGE-L', rouge_greedy["rougeL"].mid.fmeasure,
+                        rouge_temp["rougeL"].mid.fmeasure, rouge_top["rougeL"].mid.fmeasure])
