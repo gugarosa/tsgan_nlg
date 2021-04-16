@@ -51,7 +51,7 @@ if __name__ == '__main__':
 
     # Calculates the statistical reports
     mean, std = s.measurement_report(*bleu_1, *bleu_2, *bleu_3, *meteor, *rouge_1, *rouge_2, *rouge_L)
-    # signed_rank, rank_sum = s.wilcoxon_report(*bleu_1, *bleu_2, *bleu_3, *meteor, *rouge_1, *rouge_2, *rouge_L)
+    signed_rank, rank_sum = s.wilcoxon_report(*bleu_1, *bleu_2, *bleu_3, *meteor, *rouge_1, *rouge_2, *rouge_L)
 
     # Plots a Wilcoxon-based report
-    # p.plot_wilcoxon_report(signed_rank)
+    p.plot_wilcoxon_report(signed_rank)
