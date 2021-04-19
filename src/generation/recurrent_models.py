@@ -48,7 +48,7 @@ def get_recurrent_model(name):
         return RECURRENT_MODEL[name]
 
     # If object is not found
-    except:
+    except Exception:
         # Raises a RuntimeError
-        raise RuntimeError(
-            f'Recurrent-based model {name} has not been specified yet.')
+        print(f'Recurrent-based model {name} has not been specified yet.')
+        raise

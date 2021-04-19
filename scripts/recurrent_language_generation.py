@@ -29,9 +29,9 @@ def get_arguments():
 
     parser.add_argument('-temp', help='Temperature sampling', type=float, default=0.5)
 
-    parser.add_argument('-top_k', help='Amount of `k` for top-k sampling', type=int, default=0)
+    parser.add_argument('-top_k', help='Amount of `k` for top-k sampling', type=int, default=50)
 
-    parser.add_argument('-top_p', help='Probability for nucleus sampling', type=float, default=1.0)
+    parser.add_argument('-top_p', help='Probability for nucleus sampling', type=float, default=0.95)
 
     parser.add_argument('-embedding_size', help='Number of embedding units', type=int, default=256)
 

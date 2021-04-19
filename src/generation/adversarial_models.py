@@ -51,6 +51,7 @@ def get_adversarial_model(name):
         return ADVERSARIAL_MODEL[name]
 
     # If object is not found
-    except:
+    except Exception:
         # Raises a RuntimeError
-        raise RuntimeError(f'Adversarial-based model {name} has not been specified yet.')
+        print(f'Adversarial-based model {name} has not been specified yet.')
+        raise

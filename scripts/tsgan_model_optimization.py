@@ -46,9 +46,9 @@ def get_arguments():
 
     parser.add_argument('-temp', help='Temperature sampling', type=float, default=0.5)
 
-    parser.add_argument('-top_k', help='Amount of `k` for top-k sampling', type=int, default=0)
+    parser.add_argument('-top_k', help='Amount of `k` for top-k sampling', type=int, default=50)
 
-    parser.add_argument('-top_p', help='Probability for nucleus sampling', type=float, default=1.0)
+    parser.add_argument('-top_p', help='Probability for nucleus sampling', type=float, default=0.95)
 
     parser.add_argument('-min_frequency', help='Minimum frequency of tokens', type=int, default=1)
 
@@ -80,9 +80,9 @@ def get_arguments():
 
     parser.add_argument('-d_epochs', help='Amount of discriminator training epochs', type=int, default=1)
 
-    parser.add_argument('-n_agents', help='Number of meta-heuristic agents', type=int, default=2)
+    parser.add_argument('-n_agents', help='Number of meta-heuristic agents', type=int, default=15)
 
-    parser.add_argument('-n_iter', help='Number of meta-heuristic iterations', type=int, default=5)
+    parser.add_argument('-n_iter', help='Number of meta-heuristic iterations', type=int, default=25)
 
     parser.add_argument('-seed', help='Seed identifier', type=int, default=0)
 
