@@ -4,7 +4,7 @@
 import datasets
 import nalp.utils.preprocess as p
 
-# Caveat to pre-load metrics and avoid connection errors
+# Pre-load metrics and avoid any connection errors
 bleu = datasets.load_metric('bleu')
 meteor = datasets.load_metric('meteor')
 rouge = datasets.load_metric('rouge')

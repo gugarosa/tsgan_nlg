@@ -54,6 +54,7 @@ def get_heuristic(name):
         return HEURISTIC[name]
 
     # If object is not found
-    except:
+    except Exception:
         # Raises a RuntimeError
-        raise RuntimeError(f'Heuristic {name} has not been specified yet.')
+        print(f'Heuristic {name} has not been specified yet.')
+        raise

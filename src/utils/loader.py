@@ -132,7 +132,7 @@ def split_data(sentences, train_split=0.8, val_split=0.1, test_split=0.1, seed=0
     n_samples = len(sentences)
 
     # Calculates the number of samples per set
-    # Note we don't need the number of test samples as it will be the rest
+    # Note we don't need the number of test samples as it will be the remaining samples
     train_samples = round(n_samples * train_split)
     val_samples = round(n_samples * val_split)
 
