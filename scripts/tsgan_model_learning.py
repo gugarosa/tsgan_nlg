@@ -27,7 +27,7 @@ def get_arguments():
 
     parser = argparse.ArgumentParser(usage='Trains TSGAN-based models over NLG tasks.')
 
-    parser.add_argument('model', help='Type of model', choices=['tsgan_contrastive', 'tsgan_triplet'])
+    parser.add_argument('model', help='Type of model', choices=['tsgan_contrastive', 'tsgan_entropy', 'tsgan_triplet'])
 
     parser.add_argument('dataset', help='Dataset', choices=['amazon_customer_reviews', 'coco_image_captions',
                                                             'google_one_billion_words', 'wmt_emnlp17_news'])

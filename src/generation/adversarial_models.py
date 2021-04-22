@@ -3,7 +3,7 @@
 
 from nalp.models import GSGAN, MaliGAN, RelGAN, SeqGAN
 
-from core import TSGANContrastive, TSGANTriplet
+from core import TSGANContrastive, TSGANEntropy,TSGANTriplet
 
 
 class AdversarialModel:
@@ -30,6 +30,7 @@ ADVERSARIAL_MODEL = dict(
     relgan=AdversarialModel(RelGAN),
     seqgan=AdversarialModel(SeqGAN),
     tsgan_contrastive=AdversarialModel(TSGANContrastive),
+    tsgan_entropy=AdversarialModel(TSGANEntropy),
     tsgan_triplet=AdversarialModel(TSGANTriplet)
 )
 
