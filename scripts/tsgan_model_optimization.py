@@ -60,6 +60,10 @@ def get_arguments():
 
     parser.add_argument('-tau', help='Temperature', type=float, default=0.5)
 
+    parser.add_argument('-triplet_loss_type', help='Triplet loss type', type=str, default='hard')
+
+    parser.add_argument('-distance_metric', help='Distance metric', type=str, default='L2')
+
     parser.add_argument('-n_pairs', help='Number of data pairs', type=int, default=25)
 
     parser.add_argument('-batch_size', help='Size of batches', type=int, default=4)
@@ -112,6 +116,8 @@ if __name__ == '__main__':
     embedding_size = args.embedding_size
     hidden_size = args.hidden_size
     tau = args.tau
+    triplet_loss_type = args.triplet_loss_type
+    distance_metric = args.distance_metric
     n_pairs = args.n_pairs
     batch_size = args.batch_size
     pre_d_lr = args.pre_d_lr
@@ -160,9 +166,9 @@ if __name__ == '__main__':
 
     # Initializes the optimization target
     opt_fn = t.fine_tune_tsgan(model_name, model_obj, train, enc_val, encoder, corpus.vocab_size,
-                               embedding_size, hidden_size, tau, n_pairs, pre_d_lr,
-                               pre_g_lr, d_lr, g_lr, pre_d_epochs, pre_g_epochs, epochs,
-                               d_epochs, n_tokens, temp, top_k, top_p)
+                               embedding_size, hidden_size, triplet_loss_type, distance_metric, tau,
+                               n_pairs, pre_d_lr, pre_g_lr, d_lr, g_lr, pre_d_epochs, pre_g_epochs,
+                               epochs, d_epochs, n_tokens, temp, top_k, top_p)
 
     # Runs the optimization task
     history = w.start_opt(meta_name, meta_obj, opt_fn, n_agents, n_variables, n_iterations, lb, ub, hyperparams)

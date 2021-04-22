@@ -46,6 +46,10 @@ def get_arguments():
 
     parser.add_argument('-hidden_size', help='Number of hidden units', type=int, default=512)
 
+    parser.add_argument('-triplet_loss_type', help='Triplet loss type', type=str, default='hard')
+
+    parser.add_argument('-distance_metric', help='Distance metric', type=str, default='L2')
+
     parser.add_argument('-tau', help='Temperature', type=float, default=0.5)
 
     parser.add_argument('-n_pairs', help='Number of data pairs', type=int, default=25)
@@ -91,6 +95,8 @@ if __name__ == '__main__':
     model_obj = a.get_adversarial_model(model_name).obj
     embedding_size = args.embedding_size
     hidden_size = args.hidden_size
+    triplet_loss_type = args.triplet_loss_type
+    distance_metric = args.distance_metric
     tau = args.tau
     n_pairs = args.n_pairs
     batch_size = args.batch_size
@@ -126,13 +132,22 @@ if __name__ == '__main__':
     if model_name == 'tsgan_contrastive':
         # Instantiates the model
         model = model_obj(encoder=encoder, vocab_size=corpus.vocab_size, embedding_size=embedding_size,
-                          hidden_size=hidden_size, temperature=tau, n_pairs=n_pairs)
+                          hidden_size=hidden_size, distance_metric=distance_metric, temperature=tau,
+                          n_pairs=n_pairs)
+
+    # Checks if supplied model is a TSGAN with Cross-Entropy Loss
+    elif model_name == 'tsgan_entropy':
+        # Instantiates the model
+        model = model_obj(encoder=encoder, vocab_size=corpus.vocab_size, embedding_size=embedding_size,
+                          hidden_size=hidden_size, distance_metric=distance_metric, temperature=tau,
+                          n_pairs=n_pairs)
 
     # Checks if supplied model is a TSGAN with Triplet Loss
     elif model_name == 'tsgan_triplet':
         # Instantiates the model
         model = model_obj(encoder=encoder, vocab_size=corpus.vocab_size, embedding_size=embedding_size,
-                          hidden_size=hidden_size, temperature=tau)
+                          hidden_size=hidden_size, loss=triplet_loss_type, distance_metric=distance_metric,
+                          temperature=tau)
 
     # Compiles the model
     model.compile(pre_d_optimizer=tf.optimizers.Adam(learning_rate=pre_d_lr),

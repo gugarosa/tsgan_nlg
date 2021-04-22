@@ -21,7 +21,8 @@ class TSGANTriplet(Adversarial):
 
     """
 
-    def __init__(self, encoder=None, vocab_size=1, embedding_size=32, hidden_size=64, temperature=0.5):
+    def __init__(self, encoder=None, vocab_size=1, embedding_size=32, hidden_size=64, 
+                 loss='hard', distance_metric='L2', temperature=0.5):
         """Initialization method.
 
         Args:
@@ -29,6 +30,8 @@ class TSGANTriplet(Adversarial):
             vocab_size (int): The size of the vocabulary for both discriminator and generator.
             embedding_size (int): The size of the embedding layer for both discriminator and generator.
             hidden_size (int): The amount of hidden neurons for both discriminator and generator.
+            loss (str): Whether network should use hard or semi-hard negative mining.
+            distance_metric (str): Distance metric.
             temperature (float): Temperature value to sample the token.
 
         """
@@ -36,7 +39,8 @@ class TSGANTriplet(Adversarial):
         logger.info('Overriding class: Adversarial -> TSGANTriplet.')
 
         # Creating the discriminator network
-        D = TripletDiscriminator(vocab_size, embedding_size, hidden_size)
+        D = TripletDiscriminator(vocab_size, embedding_size, hidden_size,
+                                 loss=loss, distance_metric=distance_metric)
 
         # Creating the generator network
         G = LSTMGenerator(encoder, vocab_size, embedding_size, hidden_size)

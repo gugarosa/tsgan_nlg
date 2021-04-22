@@ -7,8 +7,8 @@ import utils.metrics as m
 
 
 def fine_tune_tsgan(model_name, model_obj, train, val_tokens, encoder, vocab_size, embedding_size, hidden_size,
-                    tau, n_pairs, pre_d_lr, pre_g_lr, d_lr, g_lr, pre_d_epochs, pre_g_epochs,
-                    epochs, d_epochs, n_tokens, temp, top_k, top_p):
+                    triplet_loss_type, distance_metric, tau, n_pairs, pre_d_lr, pre_g_lr, d_lr, g_lr, pre_d_epochs,
+                    pre_g_epochs, epochs, d_epochs, n_tokens, temp, top_k, top_p):
     """Wraps the fine-tuning procedure of TSGAN-based models.
 
     Args:
@@ -20,6 +20,8 @@ def fine_tune_tsgan(model_name, model_obj, train, val_tokens, encoder, vocab_siz
         vocab_size (int): The size of the vocabulary for both discriminator and generator.
         embedding_size (int): The size of the embedding layer for both discriminator and generator.
         hidden_size (int): The amount of hidden neurons for both discriminator and generator.
+        triplet_loss_type (str): Whether network should use hard or semi-hard negative mining.
+        distance_metric (str): Distance metric.
         tau (float): Temperature value to sample the token inside TSGAN.
         n_pairs (int): Number of pairs to feed to the discriminator.
         pre_d_lr (float): Pre-train discriminator learning rate.
@@ -59,13 +61,22 @@ def fine_tune_tsgan(model_name, model_obj, train, val_tokens, encoder, vocab_siz
         if model_name == 'tsgan_contrastive':
             # Instantiates the model
             model = model_obj(encoder=encoder, vocab_size=vocab_size, embedding_size=w_embedding_size,
-                              hidden_size=w_hidden_size, temperature=w_tau, n_pairs=n_pairs)
+                              hidden_size=w_hidden_size, distance_metric=distance_metric, temperature=w_tau,
+                              n_pairs=n_pairs)
+
+        # Checks if supplied model is a TSGAN with Cross-Entropy Loss
+        elif model_name == 'tsgan_entropy':
+            # Instantiates the model
+            model = model_obj(encoder=encoder, vocab_size=vocab_size, embedding_size=w_embedding_size,
+                              hidden_size=w_hidden_size, distance_metric=distance_metric, temperature=w_tau,
+                              n_pairs=n_pairs)
 
         # Checks if supplied model is a TSGAN with Triplet Loss
         elif model_name == 'tsgan_triplet':
             # Instantiates the model
             model = model_obj(encoder=encoder, vocab_size=vocab_size, embedding_size=w_embedding_size,
-                              hidden_size=w_hidden_size, temperature=w_tau)
+                              hidden_size=w_hidden_size, loss=triplet_loss_type, distance_metric=distance_metric,
+                              temperature=w_tau)
 
         # Compiles the model
         model.compile(pre_d_optimizer=tf.optimizers.Adam(learning_rate=pre_d_lr),
@@ -84,15 +95,19 @@ def fine_tune_tsgan(model_name, model_obj, train, val_tokens, encoder, vocab_siz
 
         # Re-creates the objects
         if model_name == 'tsgan_contrastive':
-            # Instantiates the model
             model = model_obj(encoder=encoder, vocab_size=vocab_size, embedding_size=w_embedding_size,
-                              hidden_size=w_hidden_size, temperature=w_tau, n_pairs=n_pairs)
+                              hidden_size=w_hidden_size, distance_metric=distance_metric, temperature=w_tau,
+                              n_pairs=n_pairs)
 
-        # Checks if supplied model is a TSGAN with Triplet Loss
-        elif model_name == 'tsgan_triplet':
-            # Instantiates the model
+        elif model_name == 'tsgan_entropy':
             model = model_obj(encoder=encoder, vocab_size=vocab_size, embedding_size=w_embedding_size,
-                              hidden_size=w_hidden_size, temperature=w_tau)
+                              hidden_size=w_hidden_size, distance_metric=distance_metric, temperature=w_tau,
+                              n_pairs=n_pairs)
+
+        elif model_name == 'tsgan_triplet':
+            model = model_obj(encoder=encoder, vocab_size=vocab_size, embedding_size=w_embedding_size,
+                              hidden_size=w_hidden_size, loss=triplet_loss_type, distance_metric=distance_metric,
+                              temperature=w_tau)
 
         # Loads the weights and build the generator
         model.load_weights('outputs/temp_opt').expect_partial()
