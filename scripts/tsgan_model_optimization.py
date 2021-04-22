@@ -31,7 +31,7 @@ def get_arguments():
 
     parser.add_argument('mh', help='Meta-heuristic identifier', choices=['ba', 'cs', 'fa', 'gp', 'pso'])
 
-    parser.add_argument('model', help='Type of model', choices=['tsgan_contrastive', 'tsgan_triplet'])
+    parser.add_argument('model', help='Type of model', choices=['tsgan_contrastive', 'tsgan_entropy', 'tsgan_triplet'])
 
     parser.add_argument('dataset', help='Dataset', choices=['amazon_customer_reviews', 'coco_image_captions',
                                                             'google_one_billion_words', 'wmt_emnlp17_news'])
