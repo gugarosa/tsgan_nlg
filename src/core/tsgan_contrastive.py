@@ -186,7 +186,7 @@ class TSGANContrastive(Adversarial):
 
         Returns:
             Pairs of samples along their labels.
-          
+         
         """
 
         # Defines the number of samples and number of pairs
