@@ -24,7 +24,7 @@ class TSGANEntropy(Adversarial):
     """
 
     def __init__(self, encoder=None, vocab_size=1, embedding_size=32, hidden_size=64,
-                 temperature=0.5, n_pairs=100):
+                 distance_metric='concat', temperature=0.5, n_pairs=100):
         """Initialization method.
 
         Args:
@@ -32,6 +32,7 @@ class TSGANEntropy(Adversarial):
             vocab_size (int): The size of the vocabulary for both discriminator and generator.
             embedding_size (int): The size of the embedding layer for both discriminator and generator.
             hidden_size (int): The amount of hidden neurons for both discriminator and generator.
+            distance_metric (str): Distance metric.
             temperature (float): Temperature value to sample the token.
             n_pairs (int): Number of pairs to feed to the discriminator.
 
@@ -40,7 +41,7 @@ class TSGANEntropy(Adversarial):
         logger.info('Overriding class: Adversarial -> TSGANEntropy.')
 
         # Creating the discriminator network
-        D = EntropyDiscriminator(vocab_size, embedding_size, hidden_size)
+        D = EntropyDiscriminator(vocab_size, embedding_size, hidden_size, distance_metric)
 
         # Creating the generator network
         G = LSTMGenerator(encoder, vocab_size, embedding_size, hidden_size)
@@ -184,7 +185,7 @@ class TSGANEntropy(Adversarial):
 
         Returns:
             Pairs of samples along their labels.
-          
+        
         """
 
         # Defines the number of samples and number of pairs

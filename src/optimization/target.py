@@ -68,7 +68,8 @@ def fine_tune_tsgan(model_name, model_obj, train, val_tokens, encoder, vocab_siz
         elif model_name == 'tsgan_entropy':
             # Instantiates the model
             model = model_obj(encoder=encoder, vocab_size=vocab_size, embedding_size=w_embedding_size,
-                              hidden_size=w_hidden_size, temperature=w_tau, n_pairs=n_pairs)
+                              hidden_size=w_hidden_size, distance_metric=distance_metric, temperature=w_tau,
+                              n_pairs=n_pairs)
 
         # Checks if supplied model is a TSGAN with Triplet Loss
         elif model_name == 'tsgan_triplet':
@@ -100,7 +101,8 @@ def fine_tune_tsgan(model_name, model_obj, train, val_tokens, encoder, vocab_siz
 
         elif model_name == 'tsgan_entropy':
             model = model_obj(encoder=encoder, vocab_size=vocab_size, embedding_size=w_embedding_size,
-                              hidden_size=w_hidden_size, temperature=w_tau, n_pairs=n_pairs)
+                              hidden_size=w_hidden_size, distance_metric=distance_metric, temperature=w_tau,
+                              n_pairs=n_pairs)
 
         elif model_name == 'tsgan_triplet':
             model = model_obj(encoder=encoder, vocab_size=vocab_size, embedding_size=w_embedding_size,

@@ -17,13 +17,14 @@ class EntropyDiscriminator(CrossEntropySiamese):
 
     """
 
-    def __init__(self, vocab_size=1, embedding_size=32, hidden_size=64):
+    def __init__(self, vocab_size=1, embedding_size=32, hidden_size=64, distance_metric='concat'):
         """Initialization method.
 
         Args:
             vocab_size (int): Vocabulary size.
             embedding_size (int): Embedding layer units.
             hidden_size (int): Hidden layer units.
+            distance_metric (str): Distance metric.
 
         """
 
@@ -33,6 +34,7 @@ class EntropyDiscriminator(CrossEntropySiamese):
         base = LSTM(vocab_size=vocab_size, embedding_size=embedding_size, hidden_size=hidden_size)
 
         # Overrides its parent class with any custom arguments if needed
-        super(EntropyDiscriminator, self).__init__(base=base, name='D_Entropy')
+        super(EntropyDiscriminator, self).__init__(base=base, distance_metric=distance_metric,
+                                                   name='D_Entropy')
 
         logger.info('Class overrided.')

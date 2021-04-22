@@ -139,7 +139,8 @@ if __name__ == '__main__':
     elif model_name == 'tsgan_entropy':
         # Instantiates the model
         model = model_obj(encoder=encoder, vocab_size=corpus.vocab_size, embedding_size=embedding_size,
-                          hidden_size=hidden_size, temperature=tau, n_pairs=n_pairs)
+                          hidden_size=hidden_size, distance_metric=distance_metric, temperature=tau,
+                          n_pairs=n_pairs)
 
     # Checks if supplied model is a TSGAN with Triplet Loss
     elif model_name == 'tsgan_triplet':
