@@ -108,10 +108,10 @@ if __name__ == '__main__':
         start_token = decoded_token[:n_tokens]
 
         # Generates with three distinct strategies
-        greedy_token = model.generate_greedy_search(start=decoded_token, max_length=len(decoded_token))
-        temp_token = model.generate_temperature_sampling(start=decoded_token, max_length=len(decoded_token),
+        greedy_token = model.generate_greedy_search(start=start_token, max_length=len(decoded_token)-n_tokens)
+        temp_token = model.generate_temperature_sampling(start=start_token, max_length=len(decoded_token)-n_tokens,
                                                          temperature=temp)
-        top_token = model.generate_top_sampling(start=decoded_token, max_length=len(decoded_token),
+        top_token = model.generate_top_sampling(start=start_token, max_length=len(decoded_token)-n_tokens,
                                                 k=top_k, p=top_p)
 
         # Appends the outputs to lists

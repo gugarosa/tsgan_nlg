@@ -125,11 +125,11 @@ def fine_tune_tsgan(model_name, model_obj, train, val_tokens, encoder, vocab_siz
             start_token = decoded_token[:n_tokens]
 
             # Generates with three distinct strategies
-            greedy_token = model.G.generate_greedy_search(start=decoded_token, max_length=len(decoded_token))
-            temp_token = model.G.generate_temperature_sampling(start=decoded_token, max_length=len(decoded_token),
-                                                               temperature=temp)
-            top_token = model.G.generate_top_sampling(start=decoded_token, max_length=len(decoded_token),
-                                                      k=top_k, p=top_p)
+            greedy_token = model.generate_greedy_search(start=start_token, max_length=len(decoded_token)-n_tokens)
+            temp_token = model.generate_temperature_sampling(start=start_token, max_length=len(decoded_token)-n_tokens,
+                                                             temperature=temp)
+            top_token = model.generate_top_sampling(start=start_token, max_length=len(decoded_token)-n_tokens,
+                                                    k=top_k, p=top_p)
 
             # Appends the outputs to lists
             tokens.append([' '.join(decoded_token)])
