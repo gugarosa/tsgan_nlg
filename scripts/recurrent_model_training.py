@@ -1,6 +1,7 @@
 # Caveat to allow running from inside or outside scripts package
 import os
 import sys
+import time
 
 sys.path.append(os.path.abspath('./src'))
 sys.path.append(os.path.abspath('../src'))
@@ -135,8 +136,13 @@ if __name__ == '__main__':
                   loss=tf.losses.SparseCategoricalCrossentropy(from_logits=True),
                   metrics=[tf.metrics.SparseCategoricalAccuracy(name='accuracy')])
 
-    # Fits the model and saves its weights
+    # Fits the model and saves its weights (also saves its training time)
+    start = time.time()
     history = model.fit(train.batches, epochs=epochs, validation_data=val.batches)
+    end = time.time()
+
+    # Adds the training time to history object
+    history.history['time'] = end - start
 
     # Saves model and objects to files
     model.save_weights(output_path, save_format='tf')

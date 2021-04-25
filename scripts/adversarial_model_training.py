@@ -1,6 +1,7 @@
 # Caveat to allow running from inside or outside scripts package
 import os
 import sys
+import time
 
 sys.path.append(os.path.abspath('./src'))
 sys.path.append(os.path.abspath('../src'))
@@ -178,6 +179,9 @@ if __name__ == '__main__':
                   d_optimizer=tf.optimizers.Adam(learning_rate=d_lr),
                   g_optimizer=tf.optimizers.Adam(learning_rate=g_lr))
 
+    # Calculates the start training time
+    start = time.time()
+
     # Checks if supplied model is a GSGAN or RelGAN
     if model_name in ['gsgan', 'relgan']:
         # Pre-fits the model
@@ -201,6 +205,12 @@ if __name__ == '__main__':
 
         # Fits the model
         model.fit(train.batches, epochs=epochs, g_epochs=g_epochs, d_epochs=d_epochs, n_rollouts=n_rollouts)
+
+    # Stops the timer
+    end = time.time()
+
+    # Adds the training time to history object
+    model.history['time'] = end - start
 
     # Saves model and objects to files
     model.save_weights(output_path, save_format='tf')
