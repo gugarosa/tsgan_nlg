@@ -26,7 +26,7 @@ def get_arguments():
 
     parser = argparse.ArgumentParser(usage='Statistically analyzes sets of .csv metrics files.')
 
-    parser.add_argument('csv_files_stem', help='Input .csv metric files without their extension', type=str, nargs='+')
+    parser.add_argument('csv_files_stem', help='Input .csv metric files without extension and seed', type=str, nargs='+')
 
     return parser.parse_args()
 
@@ -39,7 +39,8 @@ if __name__ == '__main__':
     csv_files_stem = args.csv_files_stem
 
     # Checks the folder and creates list of lists of input files
-    list_csv_files = [natsorted(glob.glob(f'{csv_file_stem}*')) for csv_file_stem in csv_files_stem]
+    list_csv_files = [natsorted(glob.glob(f'{csv_file_stem}*'))
+                      for csv_file_stem in csv_files_stem]
 
     # Reads sets of .csv files and concatenates into a list of dataframes
     # Also, group the dataframes by their `metric` column
