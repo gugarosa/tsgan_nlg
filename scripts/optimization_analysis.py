@@ -6,8 +6,10 @@ sys.path.append(os.path.abspath('./src'))
 sys.path.append(os.path.abspath('../src'))
 
 import argparse
+import glob
 
 import numpy as np
+from natsort import natsorted
 from opytimizer.utils.history import History
 
 import utils.plotter as p
@@ -39,9 +41,10 @@ def get_arguments():
 
     """
 
-    parser = argparse.ArgumentParser(usage='Analyzes a set of .pkl optimization history files.')
+    parser = argparse.ArgumentParser(usage='Analyzes sets of .pkl optimization history files.')
 
-    parser.add_argument('history_files', help='Input .pkl files with optimization history', type=str, nargs='+')
+    parser.add_argument('history_files_stem', help='Input .pkl optimization history files without extension and seed',
+                        type=str, nargs='+')
 
     return parser.parse_args()
 
@@ -51,20 +54,23 @@ if __name__ == '__main__':
     args = get_arguments()
 
     # Common-based arguments
-    history_files = args.history_files
+    history_files_stem = args.history_files_stem
 
-    # Loads a set of optimization history files
-    histories = [load_history_wrapper(history_file) for history_file in history_files]
+    # Checks the folder and creates list of lists of input files
+    list_history_files = [natsorted(glob.glob(f'{history_file_stem}*'))
+                          for history_file_stem in history_files_stem]
 
-    # Gathers best agent's position and fitness
-    # Note that we will perform this for every input history file
-    best_agent_pos = [h.get(key='best_agent', index=(0,)) for h in histories]
-    best_agent_fit = [h.get(key='best_agent', index=(1,)) for h in histories]
+    # Loads sets of optimization history files
+    histories = [[load_history_wrapper(history_file) for history_file in history_files]
+                for history_files in list_history_files]
 
-    # Peforms a mean calculation over the positions and fitnesses
-    mean_best_agent_pos = np.mean(best_agent_pos, axis=0)
-    mean_best_agent_fit = np.mean(best_agent_fit, axis=0)
+    # Gathers best agent's fitnesses
+    # Note that we will perform this for every set of input history files
+    best_agent_fit = [[h.get(key='best_agent', index=(1,)) for h in history]
+                      for history in histories]
 
-    # Plots the convergence of variables or fitness
-    p.plot_args_convergence(*mean_best_agent_pos)
-    p.plot_args_convergence(mean_best_agent_fit)
+    # Peforms a mean calculation over their fitnesses
+    mean_best_agent_fit = [np.mean(fit, axis=0) for fit in best_agent_fit]
+
+    # Plots the convergence of fitnesses
+    p.plot_args_convergence(*mean_best_agent_fit)

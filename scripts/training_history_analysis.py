@@ -23,7 +23,7 @@ def get_arguments():
 
     """
 
-    parser = argparse.ArgumentParser(usage='Analyzes a set of .pkl training history files.')
+    parser = argparse.ArgumentParser(usage='Analyzes sets of .pkl training history files.')
 
     parser.add_argument('key', help='Key that should be used to plot the analysis', type=str)
 
