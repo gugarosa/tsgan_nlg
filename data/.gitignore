@@ -1,4 +1,4 @@
 # Datasets
-language_modelling
+language_modeling
 *.txt
 *.tar.gz

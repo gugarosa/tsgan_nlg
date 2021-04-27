@@ -12,8 +12,8 @@ import nalp.utils.preprocess as p
 # Constants
 DATA_FOLDER = 'data/'
 DATA_FILES = ['amazon_customer_reviews', 'coco_image_captions',
-              'google_one_billion_words', 'wmt_emnlp17_news']
-TAR_FILE = 'language_modelling.tar.gz'
+              'wmt_emnlp17_news', 'yelp_reviews']
+TAR_FILE = 'language_modeling.tar.gz'
 TAR_PATH = DATA_FOLDER + TAR_FILE
 TAR_URL = 'https://recogna.tech/files/datasets/' + TAR_FILE
 

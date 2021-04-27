@@ -31,7 +31,7 @@ def get_arguments():
     parser.add_argument('model', help='Type of model', choices=['gru', 'lstm', 'rmc', 'rnn'])
 
     parser.add_argument('dataset', help='Dataset', choices=['amazon_customer_reviews', 'coco_image_captions',
-                                                            'google_one_billion_words', 'wmt_emnlp17_news'])
+                                                            'wmt_emnlp17_news', 'yelp_reviews'])
 
     parser.add_argument('-train_split', help='Percentage of the training set', type=float, default=0.8)
 
