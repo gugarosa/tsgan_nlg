@@ -3,7 +3,7 @@
 
 from nalp.models import GSGAN, MaliGAN, RelGAN, SeqGAN
 
-from core import TSGANContrastive, TSGANEntropy,TSGANTriplet
+from core import TSGANContrastive, TSGANEntropy, TSGANTriplet
 
 
 class AdversarialModel:
