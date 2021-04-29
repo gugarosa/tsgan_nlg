@@ -127,6 +127,8 @@ if __name__ == '__main__':
     n_rollouts = args.n_rollouts
     output_path = f'outputs/{model_name}'
 
+    print(n_filters, filters_size)
+
     # RMC-based arguments
     n_slots = args.n_slots
     n_heads = args.n_heads
@@ -162,7 +164,7 @@ if __name__ == '__main__':
     # Checks if supplied model is a MaliGAN or SeqGAN
     elif model_name in ['maligan', 'seqgan']:
         # Instantiates the model
-        model = model_obj(encoder=encoder, vocab_size=corpus.vocab_size, max_length=max_pad_length,
+        model = model_obj(encoder=encoder, vocab_size=corpus.vocab_size, max_length=max_pad_length+1,
                           embedding_size=embedding_size, hidden_size=hidden_size, n_filters=n_filters,
                           filters_size=filters_size, dropout_rate=dropout, temperature=tau)
 

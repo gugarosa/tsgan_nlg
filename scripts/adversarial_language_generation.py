@@ -101,10 +101,10 @@ if __name__ == '__main__':
                           embedding_size=embedding_size, hidden_size=hidden_size,
                           tau=tau)
 
-    # Checks if supplied model is a MaliGAN
-    elif model_name == 'maligan':
+    # Checks if supplied model is a MaliGAN or SeqGAN
+    elif model_name in ['maligan', 'seqgan']:
         # Instantiates the model
-        model = model_obj(encoder=encoder, vocab_size=corpus.vocab_size, max_length=max_pad_length,
+        model = model_obj(encoder=encoder, vocab_size=corpus.vocab_size, max_length=max_pad_length+1,
                           embedding_size=embedding_size, hidden_size=hidden_size, n_filters=n_filters,
                           filters_size=filters_size, dropout_rate=dropout, temperature=tau)
 
@@ -115,13 +115,6 @@ if __name__ == '__main__':
                           embedding_size=embedding_size, n_slots=n_slots, n_heads=n_heads,
                           head_size=head_size, n_blocks=n_blocks, n_layers=n_layers, n_filters=n_filters,
                           filters_size=filters_size, dropout_rate=dropout, tau=tau)
-
-    # Checks if supplied model is a SeqGAN
-    elif model_name == 'seqgan':
-        # Instantiates the model
-        model = model_obj(encoder=encoder, vocab_size=corpus.vocab_size, max_length=max_pad_length,
-                          embedding_size=embedding_size, hidden_size=hidden_size, n_filters=n_filters,
-                          filters_size=filters_size, dropout_rate=dropout, temperature=tau)
 
     # Loads weights and builds model
     model.load_weights(f'outputs/{model_name}').expect_partial()
@@ -139,10 +132,10 @@ if __name__ == '__main__':
         start_token = decoded_token[:n_tokens]
 
         # Generates with three distinct strategies
-        greedy_token = model.generate_greedy_search(start=start_token, max_length=len(decoded_token)-n_tokens)
-        temp_token = model.generate_temperature_sampling(start=start_token, max_length=len(decoded_token)-n_tokens,
+        greedy_token = model.G.generate_greedy_search(start=start_token, max_length=len(decoded_token)-n_tokens)
+        temp_token = model.G.generate_temperature_sampling(start=start_token, max_length=len(decoded_token)-n_tokens,
                                                          temperature=temp)
-        top_token = model.generate_top_sampling(start=start_token, max_length=len(decoded_token)-n_tokens,
+        top_token = model.G.generate_top_sampling(start=start_token, max_length=len(decoded_token)-n_tokens,
                                                 k=top_k, p=top_p)
 
         # Appends the outputs to lists
