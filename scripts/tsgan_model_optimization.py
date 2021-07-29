@@ -6,6 +6,7 @@ sys.path.append(os.path.abspath('./src'))
 sys.path.append(os.path.abspath('../src'))
 
 import argparse
+import pickle
 
 import numpy as np
 from nalp.corpus import SentenceCorpus
@@ -173,5 +174,6 @@ if __name__ == '__main__':
     # Runs the optimization task
     history = w.start_opt(meta_name, meta_obj, opt_fn, n_agents, n_variables, n_iterations, lb, ub, hyperparams)
 
-    # Saves the history object to an output file
-    history.save(output_path + '.pkl')
+    # Dumps the object to file
+    with open(output_path + '.pkl', 'wb') as output_file:
+        pickle.dump(history, output_file)

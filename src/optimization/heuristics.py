@@ -1,8 +1,8 @@
 """Heuristic algorithms wrapper.
 """
 
-from opytimizer.optimizers.evolutionary import gp
-from opytimizer.optimizers.swarm import ba, cs, fa, pso
+from opytimizer.optimizers.evolutionary import GP
+from opytimizer.optimizers.swarm import BA, CS, FA, PSO
 
 
 class Heuristic:
@@ -28,12 +28,12 @@ class Heuristic:
 
 # Defines an heuristic dictionary constant with the possible values
 HEURISTIC = dict(
-    ba=Heuristic(ba.BA, dict(f_min=0, f_max=2, A=0.5, r=0.5)),
-    cs=Heuristic(cs.CS, dict(alpha=0.3, beta=1.5, p=0.2)),
-    fa=Heuristic(fa.FA, dict(alpha=0.5, beta=0.2, gamma=1.0)),
-    gp=Heuristic(gp.GP, dict(p_reproduction=0.25, p_mutation=0.1,
+    ba=Heuristic(BA, dict(f_min=0, f_max=2, A=0.5, r=0.5)),
+    cs=Heuristic(CS, dict(alpha=0.3, beta=1.5, p=0.2)),
+    fa=Heuristic(FA, dict(alpha=0.5, beta=0.2, gamma=1.0)),
+    gp=Heuristic(GP, dict(p_reproduction=0.25, p_mutation=0.1,
                              p_crossover=0.2, prunning_ratio=0.0)),
-    pso=Heuristic(pso.PSO, dict(w=0.7, c1=1.7, c2=1.7))
+    pso=Heuristic(PSO, dict(w=0.7, c1=1.7, c2=1.7))
 )
 
 

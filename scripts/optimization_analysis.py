@@ -7,6 +7,7 @@ sys.path.append(os.path.abspath('../src'))
 
 import argparse
 import glob
+import pickle
 
 import numpy as np
 from natsort import natsorted
@@ -15,20 +16,20 @@ from opytimizer.utils.history import History
 import utils.plotter as p
 
 
-def load_history_wrapper(input_file):
+def load_history_wrapper(input_path):
     """Wraps optimization history loading into a single method.
 
     Args:
-        input_file (str): File to be loaded.
+        input_path (str): File to be loaded.
 
     Returns:
         An optimization history object.
 
     """
 
-    # Instantiates object and loads the file
-    h = History()
-    h.load(input_file)
+    # Loads object from file
+    with open(input_path, "rb") as input_file:
+        h = pickle.load(input_file)
 
     return h
 
@@ -66,7 +67,7 @@ if __name__ == '__main__':
 
     # Gathers best agent's fitnesses
     # Note that we will perform this for every set of input history files
-    best_agent_fit = [[h.get(key='best_agent', index=(1,)) for h in history]
+    best_agent_fit = [[h.get_convergence('best_agent')[1] for h in history]
                       for history in histories]
 
     # Peforms a mean calculation over their fitnesses

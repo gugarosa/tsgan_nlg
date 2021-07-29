@@ -2,9 +2,8 @@
 """
 
 from opytimizer import Opytimizer
-from opytimizer.core.function import Function
-from opytimizer.spaces.search import SearchSpace
-from opytimizer.spaces.tree import TreeSpace
+from opytimizer.core import Function
+from opytimizer.spaces import SearchSpace, TreeSpace
 
 
 def start_opt(opt_name, opt, target, n_agents, n_variables, n_iterations, lb, ub, hyperparams):
@@ -29,26 +28,21 @@ def start_opt(opt_name, opt, target, n_agents, n_variables, n_iterations, lb, ub
     # Checks if optimization algorithm is GP
     if opt_name == 'gp':
         # Creates a TreeSpace
-        space = TreeSpace(n_trees=n_agents, n_terminals=5, n_variables=n_variables,
-                          n_iterations=n_iterations, min_depth=2, max_depth=5,
-                          functions=['SUM', 'SUB', 'MUL', 'DIV'], lower_bound=lb, upper_bound=ub)
+        space = TreeSpace(n_agents, n_variables, lb, ub, 5, 2, 5, ['SUM', 'SUB', 'MUL', 'DIV'])
 
     # If optimization algorithm is something else
     else:
         # Creates the SearchSpace
-        space = SearchSpace(n_agents=n_agents, n_variables=n_variables, n_iterations=n_iterations,
-                            lower_bound=lb, upper_bound=ub)
+        space = SearchSpace(n_agents, n_variables, lb, ub)
 
-    # Creates the Optimizer
-    optimizer = opt(hyperparams=hyperparams)
+    # Creates the optimizer and function
+    optimizer = opt(hyperparams)
+    function = Function(target)
 
-    # Creates the Function
-    function = Function(pointer=target)
+    # Bundles every piece into Opytimizer class
+    task = Opytimizer(space, optimizer, function)
 
-    # Creates the optimization task
-    task = Opytimizer(space=space, optimizer=optimizer, function=function)
+    # Initializes the task
+    task.start(n_iterations)
 
-    # Initializes task
-    history = task.start(store_best_only=True)
-
-    return history
+    return task.history
