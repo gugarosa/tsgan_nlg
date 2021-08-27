@@ -162,8 +162,8 @@ if __name__ == '__main__':
     # Defines the optimization variables bounds
     # g_lr, d_lr, embedding_size, hidden_size, tau
     n_variables = 5
-    lb = [0.0001, 0.0001, 2, 2, 1]
-    ub = [0.1, 0.1, 256, 512, 9]
+    lb = [0.00001, 0.001, 128, 128, 1]
+    ub = [0.1, 0.1, 512, 1024, 9]
 
     # Initializes the optimization target
     opt_fn = t.fine_tune_tsgan(model_name, model_obj, train, enc_val, encoder, corpus.vocab_size,
