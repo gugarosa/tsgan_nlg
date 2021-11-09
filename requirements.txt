@@ -1,6 +1,7 @@
 git+https://github.com/gugarosa/dualing.git
 git+https://github.com/gugarosa/nalp.git
 datasets>=1.5.0
+natsort>=8.0.0
 opytimizer>=3.0.2
 pandas>=1.1.5
 rouge-score>=0.0.4
