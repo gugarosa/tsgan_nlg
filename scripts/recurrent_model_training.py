@@ -47,15 +47,15 @@ def get_arguments():
 
     parser.add_argument('-hidden_size', help='Number of hidden units', type=int, default=512)
 
-    parser.add_argument('-n_slots', help='Number of RMC slots', type=int, default=5)
+    parser.add_argument('-n_slots', help='Number of RMC slots', type=int, default=1)
 
-    parser.add_argument('-n_heads', help='Number of RMC heads', type=int, default=5)
+    parser.add_argument('-n_heads', help='Number of RMC heads', type=int, default=4)
 
-    parser.add_argument('-head_size', help='Size of RMC head', type=int, default=25)
+    parser.add_argument('-head_size', help='Size of RMC head', type=int, default=256)
 
     parser.add_argument('-n_blocks', help='Number of RMC blocks', type=int, default=1)
 
-    parser.add_argument('-n_layers', help='Number of RMC layers', type=int, default=3)
+    parser.add_argument('-n_layers', help='Number of RMC layers', type=int, default=5)
 
     parser.add_argument('-batch_size', help='Size of batches', type=int, default=4)
 

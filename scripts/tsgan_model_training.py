@@ -47,6 +47,16 @@ def get_arguments():
 
     parser.add_argument('-hidden_size', help='Number of hidden units', type=int, default=512)
 
+    parser.add_argument('-n_slots', help='Number of memory slots', type=int, default=1)
+
+    parser.add_argument('-n_heads', help='Number of attention heads', type=int, default=4)
+
+    parser.add_argument('-head_size', help='Size of attention head', type=int, default=256)
+
+    parser.add_argument('-n_blocks', help='Number of feed-forward networks.', type=int, default=1)
+
+    parser.add_argument('-n_layers', help='Amout of layers per feed-forward network.', type=int, default=5)
+
     parser.add_argument('-triplet_loss_type', help='Triplet loss type', type=str, default='hard')
 
     parser.add_argument('-distance_metric', help='Distance metric', type=str, default='L2')
@@ -96,6 +106,11 @@ if __name__ == '__main__':
     model_obj = a.get_adversarial_model(model_name).obj
     embedding_size = args.embedding_size
     hidden_size = args.hidden_size
+    n_slots = args.n_slots
+    n_heads = args.n_heads
+    head_size = args.head_size
+    n_blocks = args.n_blocks
+    n_layers = args.n_layers
     triplet_loss_type = args.triplet_loss_type
     distance_metric = args.distance_metric
     tau = args.tau
@@ -133,22 +148,25 @@ if __name__ == '__main__':
     if model_name == 'tsgan_contrastive':
         # Instantiates the model
         model = model_obj(encoder=encoder, vocab_size=corpus.vocab_size, embedding_size=embedding_size,
-                          hidden_size=hidden_size, distance_metric=distance_metric, temperature=tau,
+                          hidden_size=hidden_size, n_slots=n_slots, n_heads=n_heads, head_size=head_size,
+                          n_blocks=n_blocks, n_layers=n_layers, distance_metric=distance_metric, temperature=tau,
                           n_pairs=n_pairs)
 
     # Checks if supplied model is a TSGAN with Cross-Entropy Loss
     elif model_name == 'tsgan_entropy':
         # Instantiates the model
         model = model_obj(encoder=encoder, vocab_size=corpus.vocab_size, embedding_size=embedding_size,
-                          hidden_size=hidden_size, distance_metric=distance_metric, temperature=tau,
-                          n_pairs=n_pairs)
+                          hidden_size=hidden_size, n_slots=n_slots, n_heads=n_heads, head_size=head_size,
+                          n_blocks=n_blocks, n_layers=n_layers, distance_metric=distance_metric,
+                          temperature=tau, n_pairs=n_pairs)
 
     # Checks if supplied model is a TSGAN with Triplet Loss
     elif model_name == 'tsgan_triplet':
         # Instantiates the model
         model = model_obj(encoder=encoder, vocab_size=corpus.vocab_size, embedding_size=embedding_size,
-                          hidden_size=hidden_size, loss=triplet_loss_type, distance_metric=distance_metric,
-                          temperature=tau)
+                          hidden_size=hidden_size, n_slots=n_slots, n_heads=n_heads, head_size=head_size,
+                          n_blocks=n_blocks, n_layers=n_layers, loss=triplet_loss_type,
+                          distance_metric=distance_metric, temperature=tau)
 
     # Compiles the model
     model.compile(pre_d_optimizer=tf.optimizers.Adam(learning_rate=pre_d_lr),

@@ -24,6 +24,7 @@ class TSGANContrastive(Adversarial):
     """
 
     def __init__(self, encoder=None, vocab_size=1, embedding_size=32, hidden_size=64,
+                 n_slots=3, n_heads=5, head_size=10, n_blocks=1, n_layers=3,
                  distance_metric='L2', temperature=0.5, n_pairs=100):
         """Initialization method.
 
@@ -32,6 +33,11 @@ class TSGANContrastive(Adversarial):
             vocab_size (int): The size of the vocabulary for both discriminator and generator.
             embedding_size (int): The size of the embedding layer for both discriminator and generator.
             hidden_size (int): The amount of hidden neurons for both discriminator and generator.
+            n_slots (int): Number of memory slots.
+            n_heads (int): Number of attention heads.
+            head_size (int): Size of each attention head.
+            n_blocks (int): Number of feed-forward networks.
+            n_layers (int): Amout of layers per feed-forward network.
             distance_metric (str): Distance metric.
             temperature (float): Temperature value to sample the token.
             n_pairs (int): Number of pairs to feed to the discriminator.
@@ -46,7 +52,7 @@ class TSGANContrastive(Adversarial):
 
         # Creating the generator network
         G = LSTMGenerator(encoder, vocab_size, embedding_size, hidden_size)
-        # G = RMCGenerator(encoder, vocab_size, embedding_size, 1, 4, 128, 1, 3)
+        # G = RMCGenerator(encoder, vocab_size, embedding_size, n_slots, n_heads, head_size, n_blocks, n_layers)
 
         # Overrides its parent class with any custom arguments if needed
         super(TSGANContrastive, self).__init__(D, G, name='TSGANContrastive')
