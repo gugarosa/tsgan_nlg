@@ -3,7 +3,7 @@
 
 import nalp.utils.logging as l
 from dualing.models import ContrastiveSiamese
-from dualing.models.base import LSTM
+from dualing.models.base import RNN, LSTM, GRU
 
 logger = l.get_logger(__name__)
 

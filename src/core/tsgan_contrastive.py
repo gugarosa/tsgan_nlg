@@ -6,7 +6,7 @@ import nalp.utils.logging as l
 import numpy as np
 import tensorflow as tf
 from nalp.core import Adversarial
-from nalp.models.generators import LSTMGenerator
+from nalp.models.generators import RNNGenerator, LSTMGenerator, GRUGenerator, RMCGenerator
 from tensorflow.keras.utils import Progbar
 
 from core.discriminators import ContrastiveDiscriminator
@@ -46,6 +46,7 @@ class TSGANContrastive(Adversarial):
 
         # Creating the generator network
         G = LSTMGenerator(encoder, vocab_size, embedding_size, hidden_size)
+        # G = RMCGenerator(encoder, vocab_size, embedding_size, 1, 4, 128, 1, 3)
 
         # Overrides its parent class with any custom arguments if needed
         super(TSGANContrastive, self).__init__(D, G, name='TSGANContrastive')
