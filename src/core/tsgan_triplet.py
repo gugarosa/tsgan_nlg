@@ -155,6 +155,7 @@ class TSGANTriplet(Adversarial):
 
             # Samples a predicted batch
             start_batch = tf.random.categorical(preds, 1, dtype='int32')
+            start_batch = tf.where(start_batch != self.vocab_size, start_batch, 0)
 
             # Concatenates the sampled batch with the predicted batch
             sampled_batch = tf.concat([sampled_batch, start_batch], 1)

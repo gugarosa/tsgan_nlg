@@ -90,6 +90,10 @@ def fine_tune_tsgan(model_name, model_obj, train, val_tokens, encoder, vocab_siz
         # Fits the model
         model.fit(train.batches, epochs=epochs, d_epochs=d_epochs)
 
+        # Checks whether a model is giving NaN and prevents it from further sampling
+        if tf.math.is_nan(model.history['D_loss'][-1]) or tf.math.is_nan(model.history['G_loss'][-1]):
+            return 1
+
         # Saves temporary weights
         model.save_weights('outputs/temp_opt', save_format='tf')
 
